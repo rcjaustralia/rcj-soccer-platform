@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Games{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Games</h1>
+	</div>
+	<div class="row">
+		<table>
+			<thead>
+				<tr>
+					<th data-field="league">League</th>
+					<th data-field="round">Round</th>
+					<th data-field="field">Field</th>
+					<th data-field="scheduled_time">Scheduled Time</th>
+					<th data-field="home_team">Home</th>
+					<th data-field="away_team">Away</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for game in games %}
+				<tr>
+					<td><a href="{{ url_for('game', id =game.id) }}">{{ game.league.name }}</a></td>
+					<td>{{ game.round }}</td>
+					<td>{{ game.field }}</td>
+					<td>{{ game.scheduled_time }}</td>
+					<td>{{ game.home_team.name }}</td>
+					<td>{{ game.away_team.name }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<h2>Create new game</h2>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('games') }}" method="post">
+			<div class="row">
+				<div class="input-field col s4">
+					<select id="league" name="league">
+					{% for league in leagues %}
+						<option value="{{ league.id }}">{{ league.name }}</option>
+					{% endfor %}
+					</select>
+					<label for="league">League</label>
+				</div>
+				<div class="input-field col s4">
+					<select id="home_team" name="home_team">
+					{% for team in teams %}
+						<option value="{{ team.id }}">{{ team.name }} ({{ team.league.name }})</option>
+					{% endfor %}
+					</select>
+					<label for="home_team">Home Team</label>
+				</div>
+				<div class="input-field col s4">
+					<select id="away_team" name="away_team">
+					{% for team in teams %}
+						<option value="{{ team.id }}">{{ team.name }} ({{ team.league.name }})</option>
+					{% endfor %}
+					</select>
+					<label for="away_team">Away Team</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s2">
+					<input id="field" type="number" class="validate" min="1" name="field">
+					<label for="field">Field</label>
+				</div>
+				<div class="input-field col s2">
+					<input id="round" type="number" class="validate" min="1" name="round">
+					<label for="round">Round</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="scheduled_time" type="text" class="validate" name="scheduled_time">
+					<label for="scheduled_time">Time</label>
+				</div>
+				<div class="col s4">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action">Create
+					</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s4">
+					<a href="{{ url_for('games_delete_all') }}" class="btn waves-effect waves-light btn-large red">Delete All Unplayed Games</a>
+				</div>
+				<div class="col s4">
+					<a href="{{ url_for('games_populate_all') }}" class="btn waves-effect waves-light btn-large">Calculate Finals</a>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Users</h1>
+	</div>
+	<div class="row">
+		<table>
+			<thead>
+				<tr>
+					<th data-field="name">Username</th>
+					<th data-field="phone">Phone</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for user in users %}
+				<tr>
+					<td><a href="{{ url_for('user', username = user.username) }}">{{ user.username }}</a></td>
+					<td>{{ user.phone }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<h2>Create new user</h2>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('users') }}" method="post">
+			<div class="row">
+				<div class="input-field col s4">
+					<input id="username" type="text" class="validate" minlength="3" name="username" pattern="[a-z]+">
+					<label for="username">Username</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="phone" type="number" class="validate" name="phone">
+					<label for="phone">Phone Number</label>
+				</div>
+				<div class="col s4">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action">Create
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

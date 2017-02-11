@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Live Results{% endblock %}
+{% block content %}
+	<div class="row" id="timer-row">
+		<div class="col s12">
+			<h2 id="game-state">FH</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			<h2 id="game-clock">10:00</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			<h4 class="truncate">{{ game.home_team.name }}</h4>
+		</div>
+		<div class="col s6">
+			<h4 class="truncate">{{ game.away_team.name }}</h4>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			<h3 id="home-goals">{{ game.home_goals }}</h3>
+		</div>
+		<div class="col s6">
+			<h3 id="away-goals">{{ game.away_goals }}</h3>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var GAME_STATE_FIRST_HALF = "FH";
+		var GAME_STATE_HALF_TIME = "HT";
+		var GAME_STATE_SECOND_HALF = "SH";
+
+		var update_timer = 0;
+		var clock_timer = 0;
+		var timer_goal = 0;
+		var timer_start = 0;
+		var half_duration = {{ game.league.duration }};
+		var game_state = "UK";
+		var is_running = false;
+
+		function get_updates() {
+			$.getJSON("{{ url_for('update_result_game_state', id = game.id) }}", function(data) {
+				if (data["error"]) {
+					window.location.href = "{{ url_for('login') }}";
+				}
+
+				$("#home-goals").text(data["home_goals"]);
+				$("#away-goals").text(data["away_goals"]);
+				timer_start = data["timer_start"];
+				if (timer_start == "None") {
+					is_running = false;
+				} else {
+					is_running = true;
+				}
+
+				if (data["game_ended"]) {
+					timer_goal = half_duration;
+					$("#game-state").text("Game Over");
+					$("#game-clock").hide();
+				} else if (data["first_half_finished"] == false) {
+					if (is_running) {
+						timer_goal = half_duration;
+						game_state = GAME_STATE_FIRST_HALF;
+						$("#game-state").text("1st Half");
+					} else {
+						timer_goal = half_duration;
+						game_state = GAME_STATE_FIRST_HALF;
+						$("#game-state").text("Game Soon (" + data["scheduled_time"] + ")");
+					}
+				} else if (data["half_time_finished"] == false) {
+					timer_goal = 5;
+					game_state = GAME_STATE_HALF_TIME;
+					$("#game-state").text("Half Time");
+				} else if (data["second_half_finished"] == false) {
+					timer_goal = half_duration;
+					game_state = GAME_STATE_SECOND_HALF;
+					$("#game-state").text("2nd Half");
+				}
+
+				update_timer = setTimeout(get_updates, 1900);
+			});
+		}
+
+		function get_time_diff(start, goal) {
+			var diff;
+			if (start == "None") {
+				diff = goal * 60000;
+			} else {
+				diff = Math.max(0, goal * 60000 - (new Date()).getTime() + (new Date(start + "+10:00")).getTime());
+			}
+			var mins = Math.min(59, Math.floor(diff / 60000)) + "";
+			var secs = Math.round(((diff % 60000) / 1000)) + "";
+			while (secs.length < 2) {
+				secs = "0" + secs;
+			}
+
+			return mins + ":" + secs;
+		}
+
+		function clock() {
+			$("#game-clock").text(get_time_diff(timer_start, timer_goal));
+			clock_timer = setTimeout(clock, 250);
+		}
+
+		$(document).ready(function() {
+			get_updates();
+			clock();
+		});
+	</script>
+	<style type="text/css">
+	h3, h2, h4 {
+		margin: 0;
+		padding: 0;
+	}
+	#timer-row {
+		margin-top: 16px;
+	}
+	</style>
+{% endblock %}

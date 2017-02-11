@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ rtype.name }}{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>{{ rtype.name }}</h1>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('request_type', id = rtype.id) }}" method="post">
+			<div class="row">
+				<div class="input-field col s4">
+					<input id="name" type="text" class="validate" minlength="3" name="name" value="{{ rtype.name }}">
+					<label for="name">Name</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="priority" type="number" class="validate" min="0" max="100" name="priority" value="{{ rtype.priority }}">
+					<label for="priority">Priority</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="only_admin" type="checkbox" name="only_admin" value="true"{% if rtype.only_admin %} checked{% endif %}>
+					<label for="only_admin">Admin Only</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s4">
+					<input id="send_text" type="checkbox" name="send_text" value="true"{% if rtype.send_text %} checked{% endif %}>
+					<label for="send_text">Send Text</label>
+				</div>
+				<div class="input-field col s4">
+					<select id="user_id" name="user_id">
+						{% for user in users %}
+						<option value="{{ user.username }}"{% if rtype.user_id == user.username %} selected{% endif %}>{{ user.username }}</option>
+						{% endfor %}
+					</select>
+					<label for="user_id">Send To</label>
+				</div>
+				<div class="col s2">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action" value="save">Save</button>
+				</div>
+				<div class="col s2">
+					<button class="btn waves-effect waves-light btn-large red" type="submit" name="action" value="delete">Delete</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

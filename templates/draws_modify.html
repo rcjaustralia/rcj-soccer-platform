@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Draws{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Create Draw</h1>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('draws_save') }}" method="post">
+			<input type="hidden" name="game_count" id="game_count" value="{{ total }}">
+			<input type="hidden" name="league_id" value="{{ league_id }}">
+			{% for round in rounds %}
+			{% for game in round %}
+			<div class="row">
+				<div class="input-field col s1">
+					<input id="g{{ game.index }}_round" type="number" class="validate" min="1" max="{{ total_rounds }}" name="g{{ game.index }}_round" value="{{ game.round }}">
+					<label for="g{{ game.index }}_round">Round</label>
+				</div>
+				<div class="input-field col s1">
+					<input id="g{{ game.index }}_field" type="number" class="validate" min="1" max="{{ total_fields }}" name="g{{ game.index }}_field" value="{{ game.field }}">
+					<label for="g{{ game.index }}_field">Field</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="g{{ game.index }}_start_time" type="text" name="g{{ game.index }}_start_time" value="{{ game.start_time }}" class="start-time">
+					<label for="g{{ game.index }}_start_time">Start Time</label>
+				</div>
+				<div class="input-field col s3">
+					<select id="g{{ game.index }}_home" name="g{{ game.index }}_home">
+					{% if game.is_final %}
+					{% for team in finals_teams %}
+						<option value="{{ team.id }}" {% if team.id == game.home.id %}selected{% endif %}>{{ team.name }}</option>
+					{% endfor %}
+					{% else %}
+					{% for team in teams %}
+						<option value="{{ team.id }}" {% if team.id == game.home.id %}selected{% endif %}>{{ team.name }}</option>
+					{% endfor %}
+					{% endif %}
+					</select>
+					<label for="g{{ game.index }}_home">Home Team</label>
+				</div>
+				<div class="input-field col s3">
+					<select id="g{{ game.index }}_away" name="g{{ game.index }}_away">
+					{% if game.is_final %}
+					{% for team in finals_teams %}
+						<option value="{{ team.id }}" {% if team.id == game.away.id %}selected{% endif %}>{{ team.name }}</option>
+					{% endfor %}
+					{% else %}
+					{% for team in teams %}
+						<option value="{{ team.id }}" {% if team.id == game.away.id %}selected{% endif %}>{{ team.name }}</option>
+					{% endfor %}
+					{% endif %}
+					</select>
+					<label for="g{{ game.index }}_away">Away Team</label>
+				</div>
+				<input type="hidden" name="g{{ game.index }}_is_final" value="{% if game.is_final %}1{%else%}0{% endif %}">
+			</div>
+			{% endfor %}
+			{% endfor %}
+			<div class="row">
+				<div class="input-field col s6">
+					<a href="{{ url_for('draws') }}" class="btn waves-effect waves-light btn-large red">Back
+					</a>
+				</div>
+				<div class="input-field col s6">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action" value="save">Create Games
+					</button>
+				</div>
+			</div>
+		</form>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".start-time").change(function() {
+					var next_date = moment($(this).val()).subtract({{ duration}}, "minutes");
+					var row = parseInt($(this).attr("name").replace("_start_time", "").replace("g", ""));
+					var total = parseInt($("#game_count").val());
+					var last_field = 100000;
+
+					for (var i = row;i < total;i++) {
+						var field = parseInt($("#g" + i + "_field").val());
+						if (field > 0 && field <= last_field) {
+							//console.log("changing as " + field + " <= " + last_field);
+							next_date = next_date.add({{ duration }}, "minutes");
+						}
+						$("#g" + i + "_start_time").val(next_date.format("YYYY-MM-DD HH:mm:ss"));
+
+						if (field > 0) {
+							last_field = field;
+						}
+					}
+				});
+			});
+		</script>
+	</div>
+{% endblock %}

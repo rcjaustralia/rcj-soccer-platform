@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Game{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Game</h1>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('game', id = game.id) }}" method="post">
+			<div class="row">
+				<div class="input-field col s4">
+					<select id="league" name="league">
+					{% for league in leagues %}
+						<option value="{{ league.id }}" {% if league.id == game.league_id %}selected{% endif %}>{{ league.name }}</option>
+					{% endfor %}
+					</select>
+					<label for="league">League</label>
+				</div>
+				<div class="input-field col s4">
+					<select id="home_team" name="home_team">
+					{% for team in teams %}
+						<option value="{{ team.id }}" {% if team.id == game.home_team_id %}selected{% endif %}>{{ team.name }} ({{ team.league.name }})</option>
+					{% endfor %}
+					</select>
+					<label for="home_team">Home Team</label>
+				</div>
+				<div class="input-field col s4">
+					<select id="away_team" name="away_team">
+					{% for team in teams %}
+						<option value="{{ team.id }}" {% if team.id == game.away_team_id %}selected{% endif %}>{{ team.name }} ({{ team.league.name }})</option>
+					{% endfor %}
+					</select>
+					<label for="away_team">Away Team</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s2">
+					<input id="field" type="number" class="validate" min="1" name="field" value="{{ game.field }}">
+					<label for="field">Field</label>
+				</div>
+				<div class="input-field col s2">
+					<input id="round" type="number" class="validate" min="1" name="round" value="{{ game.round }}">
+					<label for="round">Round</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="scheduled_time" type="text" class="validate" name="scheduled_time" value="{{ game.scheduled_time }}">
+					<label for="scheduled_time">Time</label>
+				</div>
+				<div class="input-field col s2">
+					<input id="home_goals" type="number" class="validate" min="0" name="home_goals" value="{{ game.home_goals }}">
+					<label for="home_goals">Home Score</label>
+				</div>
+				<div class="input-field col s2">
+					<input id="away_goals" type="number" class="validate" min="0" name="away_goals" value="{{ game.away_goals }}">
+					<label for="away_goals">Away Score</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s2">
+					<input id="winner_agrees" type="checkbox" name="winner_agrees" value="true" {% if game.winner_agrees %}checked{% endif %}>
+					<label for="winner_agrees">Winner Agrees</label>
+				</div>
+				<div class="input-field col s2">
+					<input id="loser_agrees" type="checkbox" name="loser_agrees" value="true" {% if game.loser_agrees %}checked{% endif %}>
+					<label for="loser_agrees">Loser Agrees</label>
+				</div>
+				<div class="input-field col s2">
+					<input id="is_final" type="checkbox" name="is_final" value="true" {% if game.is_final %}checked{% endif %}>
+					<label for="is_final">Is Final</label>
+				</div>
+				<div class="input-field col s2">
+					<input id="game_finished" type="checkbox" name="game_finished" value="true" {% if game.game_finished %}checked{% endif %}>
+					<label for="game_finished">Finished</label>
+				</div>
+				<div class="col s2">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action" value="save">Save
+					</button>
+				</div>
+				<div class="col s2">
+					<button class="btn waves-effect waves-light btn-large red" type="submit" name="action" value="delete">Delete
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

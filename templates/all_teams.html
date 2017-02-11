@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Teams{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Teams</h1>
+	</div>
+	<div class="row">
+		<table>
+			<thead>
+				<tr>
+					<th data-field="name">Name</th>
+					<th data-field="school">School</th>
+					<th data-field="league">League</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for team in teams %}
+				<tr>
+					<td><a href="{{ url_for('team', id = team.id) }}">{{ team.name }}</a></td>
+					<td>{{ team.school }}</td>
+					<td>{{ team.league.name }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<h2>Create new team</h2>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('teams') }}" method="post">
+			<div class="row">
+				<div class="input-field col s6">
+					<input id="name" type="text" class="validate" minlength="1" name="name">
+					<label for="name">Team Name</label>
+				</div>
+				<div class="input-field col s6">
+					<input id="school" type="text" class="validate" minlength="1" name="school">
+					<label for="school">School</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s6">
+					<select id="league" name="league">
+					{% for league in leagues %}
+						<option value="{{ league.id }}">{{ league.name }}</option>
+					{% endfor %}
+					</select>
+					<label for="league">League</label>
+				</div>
+				<div class="col s4">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action">Create
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="row">
+		<h2>Create many teams</h2>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('teams') }}" method="post">
+			<input type="hidden" name="bulk-add" value="true">
+			<div class="row">
+				<div class="input-field col s12">
+					<textarea name="csv-data" class="materialize-textarea" id="csv-data"></textarea>
+					<label for="csv-data">Team Data</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s8">
+					<select id="league" name="league">
+					{% for league in leagues %}
+						<option value="{{ league.id }}">{{ league.name }}</option>
+					{% endfor %}
+					</select>
+					<label for="league">League</label>
+				</div>
+				<div class="col s4">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action">Create Many</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

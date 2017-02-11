@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Requests{% endblock %}
+{% block content %}
+<h1>Requests</h1>
+<div class="row hide">
+    <div class="col s12 m4 template">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title type">%type%</span>
+                <p><strong>Field:</strong> <span class="league"></span> <span class="field"></span></p>
+                <p><strong>Referee:</strong> <span class="username"></span></p>
+                <p class="received"></p>
+            </div>
+            <div class="card-action">
+                <a class="resolve" href="#">Resolve</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row cards">
+</div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+<script type="text/javascript">
+    var next_update = 0;
+    var update_frequency = 2000;
+    var previous_count = 100;
+    function get_requests() {
+        $.getJSON("{{ url_for('get_requests') }}", function(data) {
+            var count = 0;
+            if (data["error"]) {
+                window.location.href = "{{ url_for('login') }}";
+            }
+
+            $(".cards .col").remove();
+            if (data.length == 0) {
+                $(".cards").text("No outstanding requests!");
+            } else {
+                $(".cards").text("");
+            }
+            for (row in data) {
+                var card = $(".template").clone().removeClass("template");
+                for (field in data[row]) {
+                    if (field == "received") {
+                        data[row][field] = moment(data[row][field]).fromNow();
+                    }
+                    card.find("." + field).text(data[row][field]);
+                }
+
+                card.find(".resolve").data("url", data[row]["url"]);
+                card.appendTo(".cards");
+                count++;
+            }
+
+            $(".resolve").click(function(e) {
+                var url = $(this).data("url");
+                $.get(url, function() {
+                    next_update = 0;
+                });
+
+                return false;
+            });
+
+            if (count > previous_count && window.navigator.vibrate) {
+                window.navigator.vibrate(200);
+                console.log("vibrating");
+            }
+            previous_count = count;
+
+            next_update = performance.now() + update_frequency;
+        });
+    }
+
+    function tick(now) {
+        if (next_update >= 0 && now >= next_update) {
+            next_update = -1;
+            get_requests();
+        }
+
+        window.requestAnimationFrame(tick);
+    }
+    $(document).ready(function() {
+        tick(performance.now());
+    });
+</script>
+{% endblock %}

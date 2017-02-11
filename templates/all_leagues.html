@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Leagues{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Leagues</h1>
+	</div>
+	<div class="row">
+		<table>
+			<thead>
+				<tr>
+					<th data-field="name">Name</th>
+					<th data-field="fields">Fields</th>
+					<th data-field="teams">Teams</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for league in leagues %}
+				<tr>
+					<td><a href="{{ url_for('league', id = league.id) }}">{{ league.name }}</a></td>
+					<td>{{ league.areas }}</td>
+					<td>{{ league.teams.count() }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<h2>Create new league</h2>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('leagues') }}" method="post">
+			<div class="row">
+				<div class="input-field col s12">
+					<input id="name" type="text" class="validate" minlength="3" name="name">
+					<label for="name">Name</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s4">
+					<input id="duration" type="number" class="validate" min="1" max="10" name="duration">
+					<label for="duration">Half Duration</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="fields" type="number" class="validate" min="1" max="10" name="fields">
+					<label for="fields">Fields</label>
+				</div>
+				<div class="col s4">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action">Create
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

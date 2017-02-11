@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Scrutineer{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Scrutineer</h1>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('scrutineer', id =  team.id ) }}" method="post">
+			<div class="row">
+				<div class="input-field col s4">
+					<input id="name" type="text" class="validate" minlength="1" name="name" value="{{ team.name }}" readonly>
+					<label for="name">Team Name</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="school" type="text" class="validate" minlength="1" name="school" value="{{ team.school }}" readonly="">
+					<label for="school">School</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="league" type="text" class="validate" minlength="1" name="league" value="{{ team.league.name }}" readonly="">
+					<label for="league">League</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s8">
+				{{ team.league.requirements|safe }}
+				</div>
+				<div class="col s4">
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="scrutineer_1" type="checkbox" name="scrutineer_1" value="true" {% if team.scrutineer_1 %}checked{% endif %}>
+							<label for="scrutineer_1">Robot 1</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="scrutineer_2" type="checkbox" name="scrutineer_2" value="true" {% if team.scrutineer_2 %}checked{% endif %}>
+							<label for="scrutineer_2">Robot 2</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s12">
+							<button class="btn waves-effect waves-light btn-large" type="submit" id="print">Print &amp; Save</button>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s12">
+							<button class="btn waves-effect waves-light btn-large" type="submit">Save Only</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<script type="text/javascript" src="https://robocup.tech/static/js/dymo.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var robots = 0;
+
+				function print(n) {
+					robots++;
+					$.get("{{ url_for('label', id = team.id, n = '_N_') }}".replace("_N_", n), function(xml) {
+						var label = dymo.label.framework.openLabelXml(xml);
+						var printers = dymo.label.framework.getPrinters();
+						var name = false;
+
+						if (printers.length == 0) {
+							alert("Failed to print: no printers");
+						}
+						for (var i = 0; i < printers.length && !name; ++i) {
+							if (printers[i].printerType == "LabelWriterPrinter") {
+								name = printers[i].name;
+							}
+						}
+						if (!name) {
+							alert("Failed to print: no label writers");
+						}
+
+						label.print(name);
+						robots--;
+
+						if (robots == 0) {
+							$("form").submit();
+						}
+					});
+				}
+
+				$("#print").click(function(e) {
+					e.preventDefault();
+					if($("#scrutineer_1").is(":checked")) {
+						print(1);
+					}
+					if($("#scrutineer_2").is(":checked")) {
+						print(2);
+					}
+				});
+			});
+		</script>
+	</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Soccer Ball Specification - Rules{% endblock %}
+{% block content %}
+<h1>Soccer Ball Specification 2016</h1>
+	<p>Last Modified: January 1, 2016 &bull; <a href="http://www.robocupjunior.org.au/sites/default/files/RCJASoccer-BallSpecification2016.pdf">View Official PDF</a></p>
+	<h2>Contents</h2>
+	<ol>
+		<li><a href="#ir-light">IR Light</a>
+		</li>
+		<li><a href="#diameter">Diameter</a>
+		</li>
+		<li><a href="#durability">Durability</a>
+		</li>
+		<li><a href="#modulation">Modulation</a>
+		</li>
+		<li><a href="#battery">Battery Life</a>
+		</li>
+		<li><a href="#colouration">Colouration</a>
+		</li>
+		<li><a href="#weight">Weight</a>
+		</li>
+		<li><a href="#acknowledgements">Acknowledgements</a>
+		</li>
+	</ol>
+	<p>Note: This document is typically intended for those who manufacture soccer balls, sensors and similar components. Competitors should refer to section 2 of the soccer rules for a list of approved soccer balls.</p>
+	<h2 id="ir-light">1 IR light</h2>
+	<p>The ball shall emit infrared (IR) light of wavelengths in the range 920nm - 960nm, pulsed at a square-wave carrier frequency of 40 KHz. The ball should have enough ultra-bright, wide angle LEDs to minimize unevenness of the IR output.</p>
+	<h2 id="diameter">2 Diameter</h2>
+	<p>The diameter of the ball is required to be 74mm. A well-balanced ball shall be used.</p>
+	<h2 id="durability">3 Durability</h2>
+	<p>The ball must be able to resist normal game play. As an indication of its durability, it should be able to survive, undamaged, a free-fall from 1500mm onto a hardwood table or floor. </p>
+	<h2 id="modulation">4 Modulation</h2>
+	<p>The 40 kHz carrier output of the ball shall be modulated with a trapezoidal (stepped) waveform of frequency 1.2 kHz. Each 833 microsecond cycle of the modulation waveform shall comprise 8 carrier pulses at full intensity, followed (in turn) by 4 carrier pulses at 1/4 of full intensity, four pulses at 1/16 of full intensity and four pulses at 1/64 of full intensity, followed by a space (i.e. zero intensity) of about 346 microseconds. The peak current level in the LEDs shall be within the range of 45 to 55 mA. The radiant intensity of each LED shall be more than 20 mW/sr.</p>
+	<h2 id="battery">5 Battery Life</h2>
+	<p>If the ball has an embedded rechargeable battery, when new and fully charged it should last for more than 3 hours of continuous use before the brightness of the LEDs drops to 90% of the initial value. If the ball uses replaceable batteries, a set of new high-quality alkaline batteries should last for more than 8 hours of continuous use before the brightness of the LEDs drops to 90% of the initial value.</p>
+	<h2 id="colouration">6 Colouration</h2>
+	<p>The ball shall be neutral in colour. In particular, it must not have any green, blue or yellow colouration (to avoid confusion with the colours of the field and goals). </p>
+	<h2 id="weight">7 Weight</h2>
+	<p>The ball shall have a total mass (including all batteries and parts necessary for use in game play) of between 0.13kg and 0.15kg.</p>
+
+	<h2 id="acknowledgements">Acknowledgements</h2>
+	<p>The Soccer Ball Specifications is primarily the work of the RoboCupJunior Soccer Technical Committee and has been used with permission by RoboCupJunior Australia.</p>
+{% endblock %}

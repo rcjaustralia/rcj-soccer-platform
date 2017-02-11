@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Announce{% endblock %}
+{% block content %}
+    <div class="row">
+        <h1>Microphone</h1>
+    </div>
+    <div class="row">
+        <div class="col s12 m6">
+            <button class="btn waves-effect waves-light btn-large" type="button" id="toggle">Turn On</button>
+        </div>
+        <div class="input-field col s12 m6">
+            <p class="range-field">
+                <input id="volume" type="range" min="1" max="100" step="1" value="50">
+            </p>
+            <label for="volume">Volume</label>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var mic_on = false;
+            var volume = 0.5;
+            var context = false;
+            var microphone = false;
+            var analyser = false;
+            var gain = false;
+
+            $("#toggle").click(function(e) {
+                mic_on = !mic_on;
+                if (mic_on) {
+                    $("#toggle").text("Turn Off").addClass("red");
+                    if (gain) {
+                        gain.gain.value = volume;
+                    } else {
+                        navigator.webkitGetUserMedia({audio: true}, function(stream) {
+                            context = new AudioContext();
+                            analyser = context.createAnalyser();
+                            microphone = context.createMediaStreamSource(stream);
+                            gain = context.createGain();
+
+                            gain.gain.value = volume;
+
+                            microphone.connect(gain);
+                            gain.connect(context.destination);
+                        }, function(e) {
+                            alert("Unable to access microphone");
+                            $("#toggle").text("Turn On").removeClass("red");
+                        });
+                    }
+                } else {
+                    $("#toggle").text("Turn On").removeClass("red");
+                    gain.gain.value = 0;
+                }
+            });
+
+            $("#volume").change(function() {
+                volume = parseInt($(this).val()) / 100.0;
+                console.log("Setting volume to " + volume);
+
+                if (gain && mic_on) {
+                    gain.gain.value = volume;
+                }
+            });
+        });
+    </script>
+{% endblock %}

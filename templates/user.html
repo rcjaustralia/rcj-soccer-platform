@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ user.username }}{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>{{ user.username }}</h1>
+	</div>
+	<div class="row">
+		<div class="row">
+			<form class="col s12" action="{{ url_for('user', username =  user.username) }}" method="post">
+				<div class="row">
+					<div class="input-field col s6">
+						<input id="username" type="text" class="validate" minlength="3" name="username" pattern="[a-z]+" value="{{ user.username }}">
+						<label for="username">Username</label>
+					</div>
+					<div class="input-field col s6">
+						<input id="phone" type="number" class="validate" name="phone" value="{{ user.phone }}">
+						<label for="phone">Phone Number</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s6">
+						<input type="checkbox" name="admin" value="true" id="admin" {% if user.is_admin %}checked{% endif %}>
+						<label for="admin">Administrator</label>
+					</div>
+					<div class="col s3">
+						<button class="btn waves-effect waves-light btn-large" type="submit" name="action">Save
+						</button>
+					</div>
+					<div class="col s3">
+						<button class="btn waves-effect waves-light btn-large red" type="submit" name="action" value="delete">Disable
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}

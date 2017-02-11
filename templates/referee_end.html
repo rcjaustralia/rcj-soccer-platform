@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Referee{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Referee</h1>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('referee_game_end', id = game.id) }}" method="post">
+			<div class="row">
+				<div class="input-field col s6">
+					<input type="text" id="home_team" value="{{ game.home_team.name }}" readonly>
+					<label for="home_team">Home Team</label>
+				</div>
+				<div class="input-field col s6">
+					<input id="home_goals" type="number" class="validate" min="0" name="home_goals" value="{{ game.home_goals }}">
+					<label for="home_goals">Home Score</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s6">
+					<input type="text" id="away_team" value="{{ game.away_team.name }}" readonly>
+					<label for="away_team">Away Team</label>
+				</div>
+				<div class="input-field col s6">
+					<input id="away_goals" type="number" class="validate" min="0" name="away_goals" value="{{ game.away_goals }}">
+					<label for="away_goals">Away Score</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s12">
+					<input id="winner_agrees" type="checkbox" name="winner_agrees" value="true" {% if game.winner_agrees %}checked{% endif %}>
+					<label for="winner_agrees">{% if game.home_goals >= game.away_goals %}{{ game.home_team.name }}{% else %}{{ game.away_team.name }}{% endif %} Agrees</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s12">
+					<input id="loser_agrees" type="checkbox" name="loser_agrees" value="true" {% if game.loser_agrees %}checked{% endif %}>
+					<label for="loser_agrees">{% if game.home_goals < game.away_goals %}{{ game.home_team.name }}{% else %}{{ game.away_team.name }}{% endif %} Agrees</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s6">
+					<a href="{{ url_for('referee_game', id = game.id) }}" class="btn waves-effect waves-light btn-large">Back</a>
+				</div>
+				<div class="col s6">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action" value="save">Submit
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

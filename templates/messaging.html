@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Messaging{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Messaging ({{ balance }} remaining)</h1>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('messaging') }}" method="post">
+			<div class="row">
+				<div class="input-field col s4">
+					<select name="phones" id="phones" multiple>
+						{% for user in users %}
+						<option value="{{ user.phone }}">{{ user.username }}</option>
+						{% endfor %}
+					</select>
+					<label for="phones">Users</label>
+				</div>
+				<div class="input-field col s6">
+					<input id="message" type="text" class="validate" name="message" required maxlength="160">
+					<label for="message">Message</label>
+				</div>
+				<div class="col s2">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action">Send
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

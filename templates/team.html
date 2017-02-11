@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ team.name }} - {{ team.school}}{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>{{ team.name }} - {{ team.school }} - {{ team.league.name }}</h1>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('team', id = team.id) }}" method="post">
+			<div class="row">
+				<div class="input-field col s6">
+					<input id="name" type="text" class="validate" minlength="1" name="name" value="{{ team.name }}">
+					<label for="name">Team Name</label>
+				</div>
+				<div class="input-field col s6">
+					<input id="school" type="text" class="validate" minlength="1" name="school" value="{{ team.school }}">
+					<label for="school">School</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s6">
+					<select id="league" name="league">
+					{% for league in leagues %}
+						<option value="{{ league.id }}" {% if team.league_id == league.id %}selected{% endif %}>{{ league.name }}</option>
+					{% endfor %}
+					</select>
+					<label for="league">League</label>
+				</div>
+				<div class="input-field col s3">
+					<input id="scrutineer_1" type="checkbox" name="scrutineer_1" value="true" {% if team.scrutineer_1 %}checked{% endif %}>
+					<label for="scrutineer_1">Robot 1</label>
+				</div>
+				<div class="input-field col s3">
+					<input id="scrutineer_2" type="checkbox" name="scrutineer_2" value="true" {% if team.scrutineer_2 %}checked{% endif %}>
+					<label for="scrutineer_2">Robot 2</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s6">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action" value="save">Save
+					</button>
+				</div>
+				<div class="col s6">
+					<button class="btn waves-effect waves-light btn-large red" type="submit" name="action" value="delete">Delete
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

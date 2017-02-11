@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Schedule and Results{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Schedule and Results</h1>
+	</div>
+	<div class="row">
+		<ul class="tabs">
+			{% for league in leagues %}
+			<li class="tab col s{{ league_count }}"><a href="#league-{{ league.id }}">{{ league.name }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class="row">
+		{% for league in data %}
+		<div id="league-{{league}}" class="col s12">
+			<ul class="tabs">
+				<li class="tab col s6"><a href="#league-{{ league }}-draw" class="active">Draw</a></li>
+				<li class="tab col s6"><a href="#league-{{ league }}-results">Results</a></li>
+			</ul>
+			<div id="league-{{ league }}-results" class="col s12">
+				<h2>Results</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>Team</th>
+							<th>School</th>
+							<th>Score</th>
+							<th><abbr title="Games Played">GP</abbr></th>
+							<th><abbr title="Goals For">GF</abbr></th>
+							<th><abbr title="Goals Against">GA</abbr></th>
+							<th><abbr title="Goal Difference">GD</abbr></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% set rank = 0 %}
+						{% for team in data[league]["teams"] %}
+						{% set rank = rank + 1 %}
+						<tr>
+							<td><abbr title="Ranked {{ rank }}">{{ team.name }}</abbr></td>
+							<td>{{ team.school }}</td>
+							<td>{{ team.score() }}</td>
+							<td>{{ team.games_played() }}</td>
+							<td>{{ team.goals_for() }}</td>
+							<td>{{ team.goals_against() }}</td>
+							<td>{{ team.goal_difference() }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<div id="league-{{ league }}-draw" class="col s12">
+				<h2>Draw</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>Round</th>
+							<th>Field</th>
+							<th>Time</th>
+							<th>Home</th>
+							<th>Away</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for game in data[league]["games"] %}
+						<tr>
+							<td>
+								{% if not game.game_finished and not game.is_bye() %}
+								<a href="{{ url_for('result_game', id = game.id) }}">
+								{% endif %}
+								{% if game.is_final %}
+								Final
+								{% else %}
+								{{ game.round }}
+								{% endif %}
+								{% if not game.game_finished and not game.is_bye() %}</a>{% endif %}
+							</td>
+							<td>
+								{% if not game.game_finished and not game.is_bye() %}
+								<a href="{{ url_for('result_game', id = game.id) }}">{{ game.field }}</a>
+								{% elif not game.is_bye() %}
+								{{ game.field }}
+								{% else %}
+								-
+								{% endif %}
+							</td>
+							<td>
+								{% if not game.game_finished and not game.is_bye() %}
+								<a href="{{ url_for('result_game', id = game.id) }}">{{ game.time() }}</a>
+								{% elif not game.is_bye() %}
+								{{ game.time() }}
+								{% else %}
+								-
+								{% endif %}
+							</td>
+							<td>
+								{% if not game.game_finished and not game.is_bye() %}
+								<a href="{{ url_for('result_game', id = game.id) }}">
+								{% endif %}
+								{{ game.home_team.name }}
+								{% if game.game_finished %} ({{ game.home_goals }}){% endif %}
+								{% if not game.game_finished and not game.is_bye() %}</a>{% endif %}
+							</td>
+							<td>
+								{% if not game.game_finished and not game.is_bye() %}
+								<a href="{{ url_for('result_game', id = game.id) }}">
+								{% endif %}
+								{{ game.away_team.name }}
+								{% if game.game_finished %} ({{ game.away_goals }}){% endif %}
+								{% if not game.game_finished and not game.is_bye() %}</a>{% endif %}
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+{% endblock %}

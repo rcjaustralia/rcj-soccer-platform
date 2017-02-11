@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Request Types{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Request Types</h1>
+	</div>
+	<div class="row">
+		<table>
+			<thead>
+				<tr>
+					<th data-field="name">Name</th>
+					<th data-field="fields">Priority</th>
+					<th data-field="teams">Admin Only</th>
+					<th data-field="teams">Notify</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for rtype in types %}
+				<tr>
+					<td><a href="{{ url_for('request_type', id = rtype.id) }}">{{ rtype.name }}</a></td>
+					<td>{{ rtype.priority }}</td>
+					<td>{% if rtype.only_admin %}Yes{% else %}<em>No</em>{% endif %}</td>
+					<td>{% if rtype.send_text %}{{ rtype.user.username }}{% else %}<em>nobody</em>{% endif %}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<h2>Create new request type</h2>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('request_types') }}" method="post">
+			<div class="row">
+				<div class="input-field col s4">
+					<input id="name" type="text" class="validate" minlength="3" name="name">
+					<label for="name">Name</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="priority" type="number" class="validate" min="0" max="100" name="priority">
+					<label for="priority">Priority</label>
+				</div>
+				<div class="input-field col s4">
+					<input id="only_admin" type="checkbox" name="only_admin" value="true">
+					<label for="only_admin">Admin Only</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s4">
+					<input id="send_text" type="checkbox" name="send_text" value="true">
+					<label for="send_text">Send Text</label>
+				</div>
+				<div class="input-field col s4">
+					<select id="user_id" name="user_id">
+						{% for user in users %}
+						<option value="{{ user.username }}">{{ user.username }}</option>
+						{% endfor %}
+					</select>
+					<label for="user_id">Send To</label>
+				</div>
+				<div class="col s4">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action">Create</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

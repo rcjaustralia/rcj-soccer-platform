@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Draws{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Create Draw</h1>
+	</div>
+	<div class="row">
+		<form class="col s12" action="{{ url_for('draws') }}" method="post">
+			<div class="row">
+				<div class="input-field col s3">
+					<select id="league" name="league">
+					{% for league in leagues %}
+						<option value="{{ league.id }}">{{ league.name }}</option>
+					{% endfor %}
+					</select>
+					<label for="league">League</label>
+				</div>
+				<div class="input-field col s3">
+					<input id="game_duration" type="number" class="validate" min="1" name="game_duration">
+					<label for="game_duration">Game Duration</label>
+				</div>
+				<div class="input-field col s3">
+					<input id="round" type="number" class="validate" min="1" name="round">
+					<label for="round">Maximum Rounds</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s3">
+					<input id="start_time" type="text" name="start_time">
+					<label for="start_time">Start Time</label>
+				</div>
+				<div class="input-field col s3">
+					<input id="finals_size" type="number" name="finals_size">
+					<label for="finals_size">Finals Size</label>
+				</div>
+				<div class="input-field col s3">
+					<input id="total_repeats" type="number" name="total_repeats" value="1" min="1">
+					<label for="total_repeats">Total Repeats</label>
+				</div>
+				<div class="col s3">
+					<button class="btn waves-effect waves-light btn-large" type="submit" name="action" value="save">Next
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+[database]
+connection = mysql+pymysql://USERNAME:PASSWORD@localhost/DATABASENAME
+
+[sms]
+username = SMS_USERNAME
+password = SMS_PASSWORD
+from = RoboCupJnr

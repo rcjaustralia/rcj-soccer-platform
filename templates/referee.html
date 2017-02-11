@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+{% block title %}Referee{% endblock %}
+{% block content %}
+	<div class="row" id="timer-row">
+		<div class="col s6">
+			<h2 id="game-state">FH</h2>
+		</div>
+		<div class="col s6">
+			<h2 id="game-clock">10:00</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s4">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="prev"><i class="material-icons">skip_previous</i></button>
+		</div>
+		<div class="col s4">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="timer-toggle"><i class="material-icons">play_arrow</i></button>
+		</div>
+		<div class="col s4">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="next"><i class="material-icons">skip_next</i></button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			{% if switch_side %}
+				<h4 class="truncate valid-{{ game.home_team.valid_robots() }}">{{ game.home_team.name }}</h4>
+			{% else %}
+				<h4 class="truncate valid-{{ game.away_team.valid_robots() }}">{{ game.away_team.name }}</h4>
+			{% endif %}
+		</h4>
+		</div>
+		<div class="col s6">
+			{% if switch_side %}
+				<h4 class="truncate valid-{{ game.away_team.valid_robots() }}">{{ game.away_team.name }}</h4>
+			{% else %}
+				<h4 class="truncate valid-{{ game.home_team.valid_robots() }}">{{ game.home_team.name }}</h4>
+			{% endif %}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			{% if switch_side %}
+			<h3 id="home-goals">{{ game.home_goals }}</h3>
+			{% else %}
+			<h3 id="away-goals">{{ game.away_goals }}</h3>
+			{% endif %}
+		</div>
+		<div class="col s6">
+			{% if switch_side %}
+			<h3 id="away-goals">{{ game.away_goals }}</h3>
+			{% else %}
+			<h3 id="home-goals">{{ game.home_goals }}</h3>
+			{% endif %}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			<button class="btn waves-effect waves-light btn-large {% if switch_side %}blue{% else %}yellow{% endif %}" type="button" id="{% if switch_side %}home{% else %}away{% endif %}-goal">Goal</button>
+		</div>
+		<div class="col s6">
+			<button class="btn waves-effect waves-light btn-large {% if switch_side %}yellow{% else %}blue{% endif %}" type="button" id="{% if switch_side %}away{% else %}home{% endif %}-goal">Goal</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="{% if switch_side %}home{% else %}away{% endif %}-1-damage">Damage 1</button>
+		</div>
+		<div class="col s6">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="{% if switch_side %}away{% else %}home{% endif %}-1-damage">Damage 1</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="{% if switch_side %}home{% else %}away{% endif %}-2-damage">Damage 2</button>
+		</div>
+		<div class="col s6">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="{% if switch_side %}away{% else %}home{% endif %}-2-damage">Damage 2</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			<a href="{{ url_for('referee_game_end', id = game.id) }}" class="btn waves-effect waves-light btn-large">Finish Game</a>
+		</div>
+		<div class="col s6">
+			{% if switch_side %}
+			<a href="{{ url_for('referee_game', id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
+			{% else %}
+			<a href="{{ url_for('referee_game_2', id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
+			{% endif %}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="{% if switch_side %}home{% else %}away{% endif %}-cancel-goal">Ungoal</button>
+		</div>
+		<div class="col s6">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="{% if switch_side %}away{% else %}home{% endif %}-cancel-goal">Ungoal</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6">
+			<button class="btn waves-effect waves-light btn-large" type="button" id="flip-colours">Flip Colors</button>
+		</div>
+		<div class="col s6">
+			<a class='dropdown-button btn btn-large' href='#' data-activates='request-menu'>Request</a>
+
+			<ul id='request-menu' class='dropdown-content'>
+				{% for rtype in request_types %}
+				<li><a class="request" data-request-type="{{ rtype.id }}" href="#">{{ rtype.name }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="row reset-game">
+		<div class="col s12">
+			<button class="btn waves-effect waves-light btn-large red hide" type="button" id="reset-game">Reset Game</button>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var GAME_STATE_FIRST_HALF = "FH";
+		var GAME_STATE_HALF_TIME = "HT";
+		var GAME_STATE_SECOND_HALF = "SH";
+
+		var next_update = 0;
+		var next_clock = 0;
+		var timer_goal = 0;
+		var timer_start = 0;
+		var half_duration = {{ game.league.duration }};
+		var home_damaged_1 = 0;
+		var home_damaged_2 = 0;
+		var away_damaged_1 = 0;
+		var away_damaged_2 = 0;
+		var game_state = "UK";
+		var is_running = false;
+
+		var el_game_clock;
+		var el_home_damage_1;
+		var el_home_damage_2;
+		var el_away_damage_1;
+		var el_away_damage_2;
+		var el_timer_row;
+		var el_timer_icon;
+		var el_home_goals;
+		var el_away_goals;
+		var el_next_icon;
+		var el_prev_icon;
+		var el_game_state;
+
+		var timer_average = 0;
+		var timer_count = 0;
+
+		var game_hidden = false;
+
+		function get_updates(now) {
+			$.getJSON("{{ url_for('update_game_state', id = game.id) }}", function(data) {
+				//console.log(performance.now());
+				if (data["error"]) {
+					window.location.href = "{{ url_for('login') }}";
+				}
+
+				el_home_goals.textContent = data["home_goals"];
+				el_away_goals.textContent = data["away_goals"];
+				timer_start = data["timer_start"];
+				if (timer_start == "None") {
+					is_running = false;
+				} else {
+					is_running = true;
+				}
+
+				if (data["first_half_finished"] == false) {
+					timer_goal = half_duration;
+					game_state = GAME_STATE_FIRST_HALF;
+					el_next_icon.style.display = "inline";
+					el_prev_icon.style.display = "none";
+				} else if (data["half_time_finished"] == false) {
+					timer_goal = 5;
+					game_state = GAME_STATE_HALF_TIME;
+					el_next_icon.style.display = "inline";
+					el_prev_icon.style.display = "inline";
+				} else if (data["second_half_finished"] == false) {
+					timer_goal = half_duration;
+					game_state = GAME_STATE_SECOND_HALF;
+					el_next_icon.style.display = "none";
+					el_prev_icon.style.display = "inline";
+				}
+
+				el_game_state.textContent = game_state;
+				home_damaged_1 = data["home_damaged_1"];
+				home_damaged_2 = data["home_damaged_2"];
+				away_damaged_1 = data["away_damaged_1"];
+				away_damaged_2 = data["away_damaged_2"];
+
+				if (el_game_state.textContent == "UK") {
+					$(".btn").hide();
+					$(".reset-game .btn").show();
+					game_hidden = true;
+				} else if (game_hidden) {
+					$(".btn").show();
+					$('.reset-game .btn').hide();
+					game_hidden = false;
+				}
+
+				next_update = now + 2000;
+			});
+		}
+
+		function get_time_diff(start, goal) {
+			var diff;
+			if (start == "None") {
+				diff = goal * 60000;
+			} else {
+				diff = Math.max(0, goal * 60000 - (new Date()).getTime() + (new Date(start + "+10:00")).getTime());
+			}
+			var mins = Math.min(59, Math.floor(diff / 60000)) + "";
+			var secs = Math.min(59, Math.round(((diff % 60000) / 1000))) + "";
+			if (secs.length == 1) {
+				secs = "0" + secs;
+			} else if (secs.length == 0) {
+				secs = "00";
+			}
+
+			return mins + ":" + secs;
+		}
+
+		function damage_clock(el, start, base_text) {
+			if (start == "None") {
+				el.textContent = base_text;
+				el.classList.remove("red");
+			} else {
+				var diff = get_time_diff(start, half_duration / 10.0);
+				el.textContent = diff;
+				if (diff == "0:00") {
+					el.classList.add("red");
+				}
+			}
+		}
+
+		function clock(now) {
+			//console.log("clock");
+			el_game_clock.textContent = get_time_diff(timer_start, timer_goal);
+			if (timer_start == "None") {
+				el_timer_icon.textContent = "play_arrow";
+				el_timer_row.classList.remove("highlight-timer");
+			} else if ($("#game-clock").text() == "0:00") {
+				el_timer_row.classList.add("highlight-timer");
+				el_timer_icon.textContent = "play_arrow";
+			} else {
+				el_timer_icon.textContent = "stop";
+				el_timer_row.classList.remove("highlight-timer");
+			}
+			damage_clock(el_home_damage_1, home_damaged_1, "Damage 1");
+			damage_clock(el_home_damage_2, home_damaged_2, "Damage 2");
+			damage_clock(el_away_damage_1, away_damaged_1, "Damage 1");
+			damage_clock(el_away_damage_2, away_damaged_2, "Damage 2");
+
+			next_clock = now + 400;
+		}
+
+		function set_event(id, url) {
+			$(id).click(function(e) {
+				$.get(url, function() {
+					next_update = 0;
+				});
+			});
+		}
+
+		function tick(now) {
+			if (next_update >= 0 && now >= next_update) {
+				next_update = -1;
+				get_updates(now);
+			}
+
+			if (next_clock >= 0 && now >= next_clock) {
+				next_clock = -1;
+				clock(now);
+			}
+			window.requestAnimationFrame(tick);
+		}
+
+		function flip_colors() {
+			var yellow = $(".yellow")[0];
+			var blue = $(".blue")[0];
+
+			yellow.classList.remove("yellow");
+			yellow.classList.add("blue");
+			blue.classList.remove("blue");
+			blue.classList.add("yellow");
+		}
+
+		$(document).ready(function() {
+			el_game_clock = $("#game-clock")[0];
+			el_home_damage_1 = $("#home-1-damage")[0];
+			el_home_damage_2 = $("#home-2-damage")[0];
+			el_away_damage_1 = $("#away-1-damage")[0];
+			el_away_damage_2 = $("#away-2-damage")[0];
+			el_timer_icon = $("#timer-toggle i")[0];
+
+			el_home_goals = $("#home-goals")[0];
+			el_away_goals = $("#away-goals")[0];
+			el_game_state = $("#game-state")[0];
+			el_next_icon = $("#next")[0];
+			el_prev_icon = $("#prev")[0];
+
+			el_timer_row = $("#timer-row")[0];
+			
+			set_event("#next", "{{ url_for('next_game_state', id = game.id) }}");
+			set_event("#prev", "{{ url_for('prev_game_state', id = game.id) }}");
+			set_event("#home-goal", "{{ url_for('score_home_goal', id = game.id) }}");
+			set_event("#away-goal", "{{ url_for('score_away_goal', id = game.id) }}");
+			set_event("#home-cancel-goal", "{{ url_for('score_home_goal_cancel', id = game.id) }}");
+			set_event("#away-cancel-goal", "{{ url_for('score_away_goal_cancel', id = game.id) }}");
+
+			set_event("#home-1-damage", "{{ url_for('damage_home_1', id = game.id) }}");
+			set_event("#home-2-damage", "{{ url_for('damage_home_2', id = game.id) }}");
+			set_event("#away-1-damage", "{{ url_for('damage_away_1', id = game.id) }}");
+			set_event("#away-2-damage", "{{ url_for('damage_away_2', id = game.id) }}");
+			set_event("#timer-toggle", "{{ url_for('update_game_clock', id = game.id) }}");
+
+			$("#flip-colours").click(function() {
+				flip_colors();
+			});
+
+			$(".request").click(function(e) {
+				var url = "{{ url_for('send_request', id = game.id, rtype = 'RTYPE') }}";
+				$.get(url.replace("RTYPE", $(this).data("request-type")), function() {
+					Materialize.toast("Request Sent", 2000);
+				});
+
+				return false;
+			});
+
+			$(".valid-0").click(function(e) {
+				Materialize.toast("NO robots inspected yet!", 4000);
+			});
+
+			$(".valid-1").click(function(e) {
+				Materialize.toast("Only ONE robot inspected!", 4000);
+			});
+
+			$(".valid-2").click(function(e) {
+				Materialize.toast("Both robots inspected :)", 4000);
+			});
+
+			tick(performance.now());
+		});
+	</script>
+	<style type="text/css">
+	h3, h2, h4 {
+		margin: 0;
+		padding: 0;
+	}
+	.highlight-timer {
+		background-color: red;
+		color: white;
+	}
+	.valid-0 {
+		background-color: red;
+	}
+	.valid-1 {
+		background-color: orange;
+	}
+	</style>
+{% endblock %}

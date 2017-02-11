@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Scrutineer{% endblock %}
+{% block content %}
+	<div class="row">
+		<h1>Scrutineer</h1>
+	</div>
+	<div class="row">
+		<table>
+			<thead>
+				<tr>
+					<th data-field="league">League</th>
+					<th data-field="name">Name</th>
+					<th data-field="school">School</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for team in teams %}
+				<tr>
+					<td><a href="{{ url_for('scrutineer', id = team.id) }}">{{ team.league.name }}</a></td>
+					<td><a href="{{ url_for('scrutineer', id = team.id) }}">{{ team.name }}</a></td>
+					<td>{{ team.school }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			<a href="{{ url_for('scrutineer_delete_all') }}" class="btn waves-effect waves-light btn-large red">Clear all</a>
+		</div>
+	</div>
+{% endblock %}

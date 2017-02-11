@@ -1,9 +1,9 @@
-# The only variable you should change inside this app:
-CONFIG_PATH = "/etc/rcja-soccer.conf"
+import os
 
-# End configuration.  For more config see config-defaults.conf
-import ConfigParser, os
+ENVIRON_PREFIX = "RCJ_"
 
-config = ConfigParser.ConfigParser()
-config.readfp(open("config.conf", "r"))
-config.read(CONFIG_PATH)
+
+def get(base, name):
+    full_name = ENVIRON_PREFIX + base.upper() + "_" + name.upper()
+    val = os.environ.get(full_name, None)
+    return val

@@ -6,7 +6,7 @@ from config import config
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = config.get("database", "connection")
-app.secret_key = "R0b0C3p1sD#B@ST./"
+app.secret_key = config.get("secrets", "key")
 
 app.jinja_env.cache = {}
 

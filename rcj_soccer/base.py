@@ -3,7 +3,7 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 import logging; logger = logging.getLogger(__name__)
-import jinja2
+import sys
 from rcj_soccer.util import config
 from rcj_soccer import templates, static
 

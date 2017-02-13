@@ -17,11 +17,15 @@ requires = [
     'six'
 ]
 
+if sys.version_info < (3, 0):
+    requires.append("bjoern")
+elif sys.version_info < (3, 5):
+    requires.append("waitress")
+else:
+    requires.append("waitress") # temporarily, I hope
 if sys.version_info < (3, 5):
     requires.append("typing")
 
-if sys.version_info < (3, 0):
-    requires.append("bjoern")
 
 setup(
     name='rcj-soccer',

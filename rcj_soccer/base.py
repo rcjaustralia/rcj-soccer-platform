@@ -5,8 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 import logging; logger = logging.getLogger(__name__)
 import jinja2
 from rcj_soccer.util import config
-from rcj_soccer import templates
-app = Flask(__name__)
+from rcj_soccer import templates, static
+
+app = Flask(__name__, template_folder=templates.location, static_folder=static.location)
 logger.info("DB is {}", config.get("database", "connection"))
 app.config["SQLALCHEMY_DATABASE_URI"] = config.get("database", "connection")
 app.secret_key = config.get("secrets", "key")
@@ -17,15 +18,6 @@ migrate = Migrate(app, db)
 
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
-
-# Templating Setup
-app.jinja_env.cache = {}
-jinja_loader = jinja2.ChoiceLoader([
-    app.jinja_loader,
-    jinja2.FileSystemLoader([templates.location]),
-])
-app.jinja_loader = jinja_loader
-
 
 @app.route("/")
 def index():

@@ -1,4 +1,10 @@
 from setuptools import setup, find_packages
+import sys
+
+if sys.version_info < (2,7):
+    raise OSError("Can't run in Python < 2.7")
+elif sys.version_info > (3, 0) and sys.version_info <= (3, 3):
+    raise OSError("We don't support this far back")
 
 requires = [
     'Flask',
@@ -8,7 +14,14 @@ requires = [
     'PyMySQL',
     'python-dateutil',
     'requests',
+    'six'
 ]
+
+if sys.version_info < (3, 5):
+    requires.append("typing")
+
+if sys.version_info < (3, 0):
+    requires.append("bjoern")
 
 setup(
     name='rcj-soccer',

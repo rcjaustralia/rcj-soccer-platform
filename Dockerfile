@@ -4,9 +4,12 @@ MAINTAINER Tristan Roberts <tristan_roberts@icloud.com>
 
 EXPOSE 80
 
-RUN yum upgrade -y && \
-    yum install -y python-devel nginx && \
-    mkdir -p /app/
+RUN yum install -y epel-release && \
+    yum upgrade -y && \
+    yum install -y python-devel python2-pip && \
+    yum remove -y epel-release && \
+    mkdir -p /app/ && \
+    pip install --upgrade pip
 
 WORKDIR /app/
 

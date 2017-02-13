@@ -22,4 +22,4 @@ if __name__ == "__main__":
         server_fn = bjoern.run
     except ImportError:
         pass
-    server_fn(application, host, port)
+    server_fn(application, host=host, port=port)

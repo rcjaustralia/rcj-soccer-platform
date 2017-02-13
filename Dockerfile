@@ -1,24 +1,10 @@
-FROM centos:7
-
-MAINTAINER Tristan Roberts <tristan_roberts@icloud.com>
-
-EXPOSE 80
-
-RUN yum install -y epel-release && \
-    yum upgrade -y && \
-    yum install -y python-devel python2-pip mysql gcc libev-devel libev && \
-    yum remove -y epel-release && \
-    mkdir -p /app/ && \
-    pip install --upgrade pip
-
-WORKDIR /app/
-
-COPY requirements.txt /app/requirements.txt
-
-RUN pip install -r /app/requirements.txt
-
-COPY . /app/
-
-RUN chmod +x /app/run.sh
-
-CMD [ "bash", "/app/run.sh" ]
+FROM python:3.6-alpine
+RUN apk update
+RUN apk add bash
+WORKDIR /srv
+COPY run.py /srv/run.py
+RUN mkdir -p /srv/wheels
+COPY dist/*.whl /srv/wheels
+RUN bash -c "pip install /srv/wheels/*"
+CMD python /srv/run.py
+EXPOSE 5000

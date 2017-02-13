@@ -6,15 +6,19 @@ EXPOSE 80
 
 RUN yum install -y epel-release && \
     yum upgrade -y && \
-    yum install -y python-devel python2-pip && \
+    yum install -y python-devel python2-pip mysql gcc libev-devel libev && \
     yum remove -y epel-release && \
     mkdir -p /app/ && \
     pip install --upgrade pip
 
 WORKDIR /app/
 
-COPY . /app/
+COPY requirements.txt /app/requirements.txt
 
 RUN pip install -r /app/requirements.txt
 
-CMD [ "python", "/app/wsgi.py" ]
+COPY . /app/
+
+RUN chmod +x /app/run.sh
+
+CMD [ "bash", "/app/run.sh" ]

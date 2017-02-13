@@ -1,4 +1,5 @@
 from app import db
+import datetime
 
 
 class User(db.Model):
@@ -207,7 +208,7 @@ class Request(db.Model):
         "RequestType", uselist=False, backref="request_type")
     user_id = db.Column(db.String(64), db.ForeignKey("user.username"))
     user = db.relationship("User", uselist=False, backref="request_user")
-    received = db.Column(db.DateTime, server_default=db.func.now())
+    received = db.Column(db.DateTime, default=datetime.datetime.now)
     game_id = db.Column(db.Integer, db.ForeignKey("soccer_game.id"))
     game = db.relationship("SoccerGame", uselist=False, backref="game")
     actioned = db.Column(db.Boolean, default=False)

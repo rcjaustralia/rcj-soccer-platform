@@ -1,10 +1,11 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from config import config
+import config
 
 app = Flask(__name__)
+print "DB is", config.get("database", "connection")
 app.config["SQLALCHEMY_DATABASE_URI"] = config.get("database", "connection")
 app.secret_key = config.get("secrets", "key")
 

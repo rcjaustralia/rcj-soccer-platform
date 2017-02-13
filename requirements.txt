@@ -5,3 +5,4 @@ Flask-SQLAlchemy
 PyMySQL
 python-dateutil
 requests
+bjoern

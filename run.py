@@ -5,9 +5,21 @@ logging.basicConfig(level=logging.INFO)
 if __name__ == "__main__":
     host = "0.0.0.0"
     port = 5000
+
+    server_fn = type(application).run
+    try:
+        import waitress
+        server_fn = waitress.serve
+    except ImportError:
+        pass
+    try:
+        import sanic
+        server_fn = sanic.Sanic.run
+    except ImportError:
+        pass
     try:
         import bjoern
-        bjoern.run(application, host, port)
+        server_fn = bjoern.run
     except ImportError:
-        logging.warning(UserWarning("This is not a production ready server"))
-        application.run(host, port)
+        pass
+    server_fn(application, host=host, port=port)

@@ -1,8 +1,0 @@
-Flask
-Flask-Migrate
-Flask-Script
-Flask-SQLAlchemy
-PyMySQL
-python-dateutil
-requests
-bjoern

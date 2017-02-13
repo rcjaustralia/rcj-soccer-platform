@@ -134,18 +134,18 @@ def show_draw():
     # Finals
     finals_size = finals_size  # i.e Top N
     finals_games = finals_size / 2
-    print(finals_games)
-    print(finals_size)
+    logger.error(finals_games)
+    logger.error(finals_size)
 
     finals_teams = []
     round_count = 1
-    print("before", len(rounds))
+    logger.error("before", len(rounds))
     while finals_games > 0:
         games = []
         current_time = current_time + timedelta(minutes=duration)
         for i in range(finals_games):
-            print(round_count + 1, ": Top", i + 1, "vs"),
-            print("Top", finals_games * 2 - i)
+            logger.error(round_count + 1, ": Top", i + 1, "vs"),
+            logger.error("Top", finals_games * 2 - i)
             home_team = Team.query.filter_by(is_system=True).filter_by(
                 school="finals:top:" + str(i + 1)).filter_by(
                 league_id=league_id).first()
@@ -191,7 +191,7 @@ def show_draw():
         finals_games = finals_games / 2
 
     finals_teams.sort(key=lambda x: x.name)
-    print("after", len(rounds))
+    logger.error("after", len(rounds))
     return render_template("draws_modify.html", rounds=rounds,
                            teams=real_teams, total=total, total_fields=fields,
                            total_rounds=total_rounds, league_id=league_id,

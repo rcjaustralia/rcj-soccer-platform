@@ -1,5 +1,5 @@
 from flask import request, render_template, redirect, url_for
-
+import logging; logger = logging.getLogger(__name__)
 from rcj_soccer.base import app, db
 from rcj_soccer.models import League
 from rcj_soccer.views.auth import check_user, template

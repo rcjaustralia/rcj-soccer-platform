@@ -1,8 +1,10 @@
-from app import app
-from models import SoccerGame
-from flask import request, render_template
-from auth import template
 import json
+
+from flask import request, render_template
+
+from rcj_soccer.base import app
+from rcj_soccer.models import SoccerGame
+from rcj_soccer.views.auth import template
 
 
 @app.route("/results/<id>", methods=["GET"])

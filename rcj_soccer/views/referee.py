@@ -1,11 +1,12 @@
-from app import app, db
-from models import SoccerGame, RequestType, Request
-from flask import request, render_template, redirect, url_for
-from auth import check_user, template
-
 import json
-import sms
 from datetime import datetime
+
+from flask import request, render_template, redirect, url_for
+
+from rcj_soccer.base import app, db
+from rcj_soccer.models import SoccerGame, RequestType, Request
+from rcj_soccer.util import sms
+from rcj_soccer.views.auth import check_user, template
 
 
 @app.route("/referee", methods=["GET"])

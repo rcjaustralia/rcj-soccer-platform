@@ -1,5 +1,7 @@
 import requests
-import config
+import logging
+from . import config
+logger = logging.getLogger(__name__)
 
 
 def send(to, message):
@@ -11,8 +13,7 @@ def send(to, message):
         "from": config.get("sms", "from").strip(),
         "message": message
     })
-
-    print "SMS sent:", r.text
+    logger.info("SMS sent: {}", r.text)
 
 
 def balance():

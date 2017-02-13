@@ -1,9 +1,8 @@
-from app import app
-from models import SoccerGame, Team, League
 from flask import render_template
-from auth import template
 
-from datetime import datetime
+from rcj_soccer.base import  app
+from rcj_soccer.models import SoccerGame, Team, League
+from rcj_soccer.views.auth import template
 
 
 @app.route("/results", methods=["GET", "POST"])

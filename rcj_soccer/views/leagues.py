@@ -1,7 +1,8 @@
-from app import app, db
-from models import League
 from flask import request, render_template, redirect, url_for
-from auth import check_user, template
+
+from rcj_soccer.base import app, db
+from rcj_soccer.models import League
+from rcj_soccer.views.auth import check_user, template
 
 
 @app.route("/leagues", methods=["GET", "POST"])

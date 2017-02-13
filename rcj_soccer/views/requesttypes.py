@@ -1,7 +1,8 @@
-from app import app, db
-from models import RequestType, User
 from flask import request, render_template, redirect, url_for
-from auth import check_user, template
+
+from rcj_soccer.base import app, db
+from rcj_soccer.models import RequestType, User
+from rcj_soccer.views.auth import check_user, template
 
 
 @app.route("/request_types", methods=["GET", "POST"])

@@ -1,11 +1,12 @@
-from app import app, db
-from models import SoccerGame, Team, League
-from flask import request, render_template, redirect, url_for
 import random
-from auth import check_user, template
-
-from dateutil.parser import parse
 from datetime import timedelta
+import logging; logger = logging.getLogger(__name__)
+from dateutil.parser import parse
+from flask import request, render_template, redirect, url_for
+
+from rcj_soccer.base import app, db
+from rcj_soccer.models import SoccerGame, Team, League
+from rcj_soccer.views.auth import check_user, template
 
 
 @app.route("/draws", methods=["GET", "POST"])
@@ -23,7 +24,7 @@ def draws_save():
     if not check_user(True):
         return redirect(url_for("login"))
     count = int(request.form["game_count"])
-    for i in xrange(count):
+    for i in range(count):
         game = SoccerGame()
         game.league_id = int(request.form["league_id"])
         game.home_team_id = int(field(i, "home"))
@@ -104,12 +105,12 @@ def show_draw():
 
     total = 0
     game_count = 0
-    for round_number in xrange(total_rounds):
+    for round_number in range(total_rounds):
         # if not just_updated:
         #   current_time = current_time + timedelta(minutes=duration)
         games = get_games(teams)
         # print [(game["home"], game["away"]) for game in games]
-        for i in xrange(len(games)):
+        for i in range(len(games)):
             is_bye = False
             games[i]["home"] = real_teams[games[i]["home"]] if games[
                 i]["home"] < team_count else bye_team
@@ -122,7 +123,7 @@ def show_draw():
             games[i]["field"] = (game_count % fields) + 1 if not is_bye else 0
             games[i]["start_time"] = str(current_time)
             if ((game_count + 1) % fields) == 0 and not is_bye:
-                print i, fields
+                logger.info(str(i) + ' ' + str(fields))
                 current_time = current_time + timedelta(minutes=duration)
             if not is_bye:
                 game_count += 1
@@ -133,18 +134,18 @@ def show_draw():
     # Finals
     finals_size = finals_size  # i.e Top N
     finals_games = finals_size / 2
-    print finals_games
-    print finals_size
+    print(finals_games)
+    print(finals_size)
 
     finals_teams = []
     round_count = 1
-    print "before", len(rounds)
+    print("before", len(rounds))
     while finals_games > 0:
         games = []
         current_time = current_time + timedelta(minutes=duration)
         for i in range(finals_games):
-            print round_count + 1, ": Top", i + 1, "vs",
-            print "Top", finals_games * 2 - i
+            print(round_count + 1, ": Top", i + 1, "vs"),
+            print("Top", finals_games * 2 - i)
             home_team = Team.query.filter_by(is_system=True).filter_by(
                 school="finals:top:" + str(i + 1)).filter_by(
                 league_id=league_id).first()
@@ -190,7 +191,7 @@ def show_draw():
         finals_games = finals_games / 2
 
     finals_teams.sort(key=lambda x: x.name)
-    print "after", len(rounds)
+    print("after", len(rounds))
     return render_template("draws_modify.html", rounds=rounds,
                            teams=real_teams, total=total, total_fields=fields,
                            total_rounds=total_rounds, league_id=league_id,

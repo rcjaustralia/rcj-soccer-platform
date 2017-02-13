@@ -1,6 +1,7 @@
-from app import app
 from flask import request, render_template
-from auth import template
+
+from rcj_soccer.base import app
+from rcj_soccer.views.auth import template
 
 
 @app.route("/rules", methods=["GET"])

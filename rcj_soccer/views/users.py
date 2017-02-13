@@ -1,11 +1,11 @@
-from app import app, db
-from models import User
-from flask import request, render_template, redirect, url_for
-from auth import check_user, template
-
-import sms
-
 import re
+
+from flask import request, render_template, redirect, url_for
+
+from rcj_soccer.base import app, db
+from rcj_soccer.models import User
+from rcj_soccer.util import sms
+from rcj_soccer.views.auth import check_user, template
 
 
 @app.route("/users", methods=["GET", "POST"])

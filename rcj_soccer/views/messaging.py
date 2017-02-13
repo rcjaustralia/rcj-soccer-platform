@@ -1,9 +1,9 @@
-from app import app
-from models import User
 from flask import request, render_template, redirect
-from auth import check_user, template
 
-import sms
+from rcj_soccer.base import app
+from rcj_soccer.models import User
+from rcj_soccer.util import sms
+from rcj_soccer.views.auth import check_user, template
 
 
 @app.route("/messaging", methods=["GET", "POST"])

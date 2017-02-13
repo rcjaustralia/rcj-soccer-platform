@@ -1,9 +1,9 @@
-from app import app, db
-from models import SoccerGame, Team, League
-from flask import request, render_template, redirect, url_for
-from auth import check_user, template
-
 from dateutil.parser import parse
+from flask import request, render_template, redirect, url_for
+
+from rcj_soccer.base import app, db
+from rcj_soccer.models import SoccerGame, Team, League
+from rcj_soccer.views.auth import check_user, template
 
 
 @app.route("/games", methods=["GET", "POST"])
@@ -102,7 +102,7 @@ def calculate_system_teams():
     games = SoccerGame.query.all()
     games = filter(lambda g: g.is_system_game(), games)
     for game in games:
-        print game.id, game.can_populate()
+        print(game.id, game.can_populate())
         if not game.can_populate():
             continue
 
@@ -111,7 +111,7 @@ def calculate_system_teams():
         teams = Team.query.filter_by(is_system=False).filter_by(
             league_id=game.league_id).all()
         teams.sort(cmp=lambda a, b: b.compare(a, finals_only))
-        print "Only consider finals:", finals_only
+        print("Only consider finals:", finals_only)
         home_index = int(game.home_team.school.replace("finals:top:", "")) - 1
         away_index = int(game.away_team.school.replace("finals:top:", "")) - 1
         game.home_team_id = teams[home_index].id

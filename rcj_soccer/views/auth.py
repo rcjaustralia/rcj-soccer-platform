@@ -1,10 +1,14 @@
-from app import app, db
-from models import User
-from flask import request, render_template, redirect, session, url_for
-import random
 import hashlib
+import random
+import logging
+logger = logging.getLogger(__name__)
 from datetime import datetime, timedelta
-import sms
+
+from flask import request, render_template, redirect, session, url_for
+
+from rcj_soccer.base import app, db
+from rcj_soccer.models import User
+from rcj_soccer.util import sms
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -57,7 +61,7 @@ def show_username_form():
 
 
 def send_sms(phone, token):
-    print "SENDING SMS: ", token
+    logger.info("SENDING SMS: {}", token)
     sms.send(
         phone,
         "Your security code for logging into RoboCup Junior is: " + str(token))

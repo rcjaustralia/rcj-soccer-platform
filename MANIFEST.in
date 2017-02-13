@@ -1,0 +1,2 @@
+recursive-include rcj_soccer/static *
+recursive-include rcj_soccer/templates *

@@ -2,7 +2,18 @@ from .base import db
 import datetime
 
 
+class Competition(db.Model):
+    id = db.Column(db.String(64), primary_key=True)
+    name = db.Column(db.String(128))
+    fb_link = db.Column(db.String(64))
+    twitter_link = db.Column(db.String(64))
+    event_sponsor_link = db.Column(db.String(128))
+    event_sponsor_img = db.Column(db.String(200))
+
+
 class User(db.Model):
+    competition_id = db.Column(db.String(64), db.ForeignKey("competition.id"))
+    competition = db.relationship("Competition", uselist=False)
     username = db.Column(db.String(64), primary_key=True)
     phone = db.Column(db.String(12), unique=True)
     session_token = db.Column(db.String(255), unique=True)
@@ -14,9 +25,9 @@ class User(db.Model):
 
 
 class League(db.Model):
+    competition_id = db.Column(db.String(64), db.ForeignKey("competition.id"))
+    competition = db.relationship("Competition", uselist=False)
     id = db.Column(db.Integer, primary_key=True)
-    competition = db.Column(
-        db.Enum("dance", "rescue", "soccer", name="competition_enum"))
     name = db.Column(db.String(64))
     areas = db.Column(db.Integer, default=1)
     teams = db.relationship("Team", lazy="dynamic", backref="team")
@@ -192,6 +203,8 @@ class SoccerGame(db.Model):
 
 
 class RequestType(db.Model):
+    competition_id = db.Column(db.String(64), db.ForeignKey("competition.id"))
+    competition = db.relationship("Competition", uselist=False)
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     only_admin = db.Column(db.Boolean, default=False)

@@ -7,39 +7,45 @@ from rcj_soccer.base import app, db
 from rcj_soccer.models import SoccerGame, RequestType, Request
 from rcj_soccer.util import sms
 from rcj_soccer.views.auth import check_user, template
+from rcj_soccer.views.competition import get_competition
 
 
-@app.route("/referee", methods=["GET"])
-def referee():
-    if not check_user():
-        return redirect(url_for("login"))
+@app.route("/<competition>/referee", methods=["GET"])
+def referee(competition):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
+        return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
-        return show_all_unfinished_games()
+        return show_all_unfinished_games(comp)
 
 
-@app.route("/referee/<id>/0", methods=["GET"])
-def referee_game(id):
-    if not check_user():
-        return redirect(url_for("login"))
+@app.route("/<competition>/referee/<id>/0", methods=["GET"])
+def referee_game(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
+        return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
-        return show_game(int(id), False)
+        return show_game(comp, int(id), False)
 
 
-@app.route("/referee/<id>/1", methods=["GET"])
-def referee_game_2(id):
-    if not check_user():
-        return redirect(url_for("login"))
+@app.route("/<competition>/referee/<id>/1", methods=["GET"])
+def referee_game_2(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
+        return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
-        return show_game(int(id), True)
+        return show_game(comp, int(id), True)
 
 
-@app.route("/referee/<id>/end", methods=["GET", "POST"])
-def referee_game_end(id):
-    if not check_user():
-        return redirect(url_for("login"))
+@app.route("/<competition>/referee/<id>/end", methods=["GET", "POST"])
+def referee_game_end(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
+        return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         game = SoccerGame.query.filter_by(id=id).one()
-        return render_template("referee_end.html", auth=template(), game=game)
+        return render_template("referee_end.html", auth=template(),
+                               game=game, comp=comp)
     else:
         game = SoccerGame.query.filter_by(id=id).one()
         game.winner_agrees = (request.form.get(
@@ -48,12 +54,13 @@ def referee_game_end(id):
         game.game_finished = True
         game.ref_id = check_user().username
         db.session.commit()
-        return redirect("referee")
+        return redirect("referee", competition=comp.id)
 
 
-@app.route("/referee/<id>/state", methods=["GET"])
-def update_game_state(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/state", methods=["GET"])
+def update_game_state(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -69,13 +76,15 @@ def update_game_state(id):
         "home_damaged_2": str(game.home_damaged_2).replace(" ", "T"),
         "away_damaged_1": str(game.away_damaged_1).replace(" ", "T"),
         "away_damaged_2": str(game.away_damaged_2).replace(" ", "T"),
-        "test": str(datetime.now()).replace(" ", "T")
+        "test": str(datetime.now()).replace(" ", "T"),
+        "competition": comp.id
     })
 
 
-@app.route("/referee/<id>/toggle_clock", methods=["GET"])
-def update_game_clock(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/toggle_clock", methods=["GET"])
+def update_game_clock(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -87,9 +96,10 @@ def update_game_clock(id):
     return json.dumps({"success": "toggle_clock"})
 
 
-@app.route("/referee/<id>/next_state", methods=["GET"])
-def next_game_state(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/next_state", methods=["GET"])
+def next_game_state(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -108,9 +118,10 @@ def next_game_state(id):
     return json.dumps({"success": "next_state"})
 
 
-@app.route("/referee/<id>/prev_state", methods=["GET"])
-def prev_game_state(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/prev_state", methods=["GET"])
+def prev_game_state(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -129,9 +140,10 @@ def prev_game_state(id):
     return json.dumps({"success": "prev_state"})
 
 
-@app.route("/referee/<id>/home_goal", methods=["GET"])
-def score_home_goal(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/home_goal", methods=["GET"])
+def score_home_goal(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -144,9 +156,10 @@ def score_home_goal(id):
     return json.dumps({"success": "home_goal"})
 
 
-@app.route("/referee/<id>/away_goal", methods=["GET"])
-def score_away_goal(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/away_goal", methods=["GET"])
+def score_away_goal(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -159,9 +172,10 @@ def score_away_goal(id):
     return json.dumps({"success": "away_goal"})
 
 
-@app.route("/referee/<id>/home_goal_cancel", methods=["GET"])
-def score_home_goal_cancel(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/home_goal_cancel", methods=["GET"])
+def score_home_goal_cancel(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -171,9 +185,10 @@ def score_home_goal_cancel(id):
     return json.dumps({"success": "home_goal_cancel"})
 
 
-@app.route("/referee/<id>/away_goal_cancel", methods=["GET"])
-def score_away_goal_cancel(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/away_goal_cancel", methods=["GET"])
+def score_away_goal_cancel(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -183,9 +198,10 @@ def score_away_goal_cancel(id):
     return json.dumps({"success": "away_goal_cancel"})
 
 
-@app.route("/referee/<id>/damage_home_1", methods=["GET"])
-def damage_home_1(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/damage_home_1", methods=["GET"])
+def damage_home_1(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -197,9 +213,10 @@ def damage_home_1(id):
     return json.dumps({"success": "damage_home_1"})
 
 
-@app.route("/referee/<id>/damage_home_2", methods=["GET"])
-def damage_home_2(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/damage_home_2", methods=["GET"])
+def damage_home_2(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -211,9 +228,10 @@ def damage_home_2(id):
     return json.dumps({"success": "damage_home_2"})
 
 
-@app.route("/referee/<id>/damage_away_1", methods=["GET"])
-def damage_away_1(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/damage_away_1", methods=["GET"])
+def damage_away_1(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -225,9 +243,10 @@ def damage_away_1(id):
     return json.dumps({"success": "damage_away_1"})
 
 
-@app.route("/referee/<id>/damage_away_2", methods=["GET"])
-def damage_away_2(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/damage_away_2", methods=["GET"])
+def damage_away_2(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -239,9 +258,10 @@ def damage_away_2(id):
     return json.dumps({"success": "damage_away_2"})
 
 
-@app.route("/referee/<id>/reset", methods=["GET"])
-def reset_game(id):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/reset", methods=["GET"])
+def reset_game(competition, id):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).one()
@@ -259,9 +279,10 @@ def reset_game(id):
     return json.dumps({"success": "reset_game"})
 
 
-@app.route("/referee/<id>/request/<rtype>", methods=["GET"])
-def send_request(id, rtype):
-    if not check_user():
+@app.route("/<competition>/referee/<id>/request/<rtype>", methods=["GET"])
+def send_request(competition, id, rtype):
+    comp = get_competition(competition)
+    if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
     req = Request()
@@ -284,18 +305,24 @@ def send_request(id, rtype):
     return json.dumps({"success": "send_request"})
 
 
-def show_game(id, switch):
+def show_game(comp, id, switch):
     game = SoccerGame.query.filter_by(id=id).one()
-    request_types = RequestType.query.order_by(
-        RequestType.priority.desc(), RequestType.name.asc()).all()
+    request_types = RequestType.query.filter_by(
+        competition_id=comp.id
+    ).order_by(
+        RequestType.priority.desc(), RequestType.name.asc()
+    ).all()
     return render_template("referee.html", game=game, auth=template(),
-                           switch_side=switch, request_types=request_types)
+                           switch_side=switch, request_types=request_types,
+                           comp=comp)
 
 
-def show_all_unfinished_games():
+def show_all_unfinished_games(comp):
     games = SoccerGame.query.filter_by(game_finished=False)\
         .filter(SoccerGame.home_team.has(is_system=False) &
-                SoccerGame.away_team.has(is_system=False))\
+                SoccerGame.away_team.has(is_system=False) &
+                SoccerGame.league.has(competition_id=comp.id))\
         .order_by(SoccerGame.scheduled_time.asc(), SoccerGame.round.asc(),
                   SoccerGame.field.asc()).all()
-    return render_template("referee_games.html", games=games, auth=template())
+    return render_template("referee_games.html", games=games, auth=template(),
+                           comp=comp)

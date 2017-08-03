@@ -1,27 +1,33 @@
 import random
 from datetime import timedelta
-import logging; logger = logging.getLogger(__name__)
+import logging
+
 from dateutil.parser import parse
 from flask import request, render_template, redirect, url_for
 
 from rcj_soccer.base import app, db
 from rcj_soccer.models import SoccerGame, Team, League
 from rcj_soccer.views.auth import check_user, template
+from rcj_soccer.views.competition import get_competition
+
+logger = logging.getLogger(__name__)
 
 
-@app.route("/draws", methods=["GET", "POST"])
-def draws():
-    if not check_user(True):
+@app.route("/<competition>/draws", methods=["GET", "POST"])
+def draws(competition):
+    comp = get_competition(competition)
+    if not check_user(comp.id, True):
         return redirect(url_for("login"))
     if request.method == "GET":
-        return show_draw_options()
+        return show_draw_options(comp)
     else:
-        return show_draw()
+        return show_draw(comp)
 
 
-@app.route("/draws_save", methods=["POST"])
-def draws_save():
-    if not check_user(True):
+@app.route("/<competition>/draws_save", methods=["POST"])
+def draws_save(competition):
+    comp = get_competition(competition)
+    if not check_user(comp.id, True):
         return redirect(url_for("login"))
     count = int(request.form["game_count"])
     for i in range(count):
@@ -33,18 +39,21 @@ def draws_save():
         game.round = int(field(i, "round"))
         game.is_final = field(i, "is_final") == "1"
         game.scheduled_time = parse(field(i, "start_time"))
+        game.comp_id = comp.id
         db.session.add(game)
         db.session.commit()
-    return render_template("draw_saved.html", auth=template())
+    return render_template("draw_saved.html",
+                           auth=template(), comp=comp)
 
 
 def field(count, name):
     return request.form["g" + str(count) + "_" + name]
 
 
-def show_draw_options():
-    leagues = League.query.all()
-    return render_template("draws.html", leagues=leagues, auth=template())
+def show_draw_options(comp):
+    leagues = League.query.filter_by(competition_id=comp.id).all()
+    return render_template("draws.html", leagues=leagues,
+                           auth=template(), comp=comp)
 
 
 def next_round(teams):
@@ -58,10 +67,10 @@ def get_games(teams):
     half = len(teams) / 2
     home = teams[:half]
     away = teams[half:][::-1]
-    return [{"home": home[i], "away": away[i]} for i in xrange(half)]
+    return [{"home": home[i], "away": away[i]} for i in range(half)]
 
 
-def show_draw():
+def show_draw(comp):
     league_id = int(request.form["league"])
     duration = int(request.form["game_duration"])
     max_rounds = int(request.form["round"])
@@ -195,5 +204,5 @@ def show_draw():
     return render_template("draws_modify.html", rounds=rounds,
                            teams=real_teams, total=total, total_fields=fields,
                            total_rounds=total_rounds, league_id=league_id,
-                           auth=template(), duration=duration,
+                           auth=template(), duration=duration, comp=comp,
                            finals_teams=finals_teams)

@@ -9,7 +9,8 @@ echo "user = $DB_USER"
 echo "pass = $DB_PASS"
 echo "name = $DB_NAME"
 echo "CREATE DATABASE IF NOT EXISTS $DB_NAME;" | mysql -u $DB_USER -p$DB_PASS -h $DB_HOST --protocol TCP
-python rcj_soccer db init
-python rcj_soccer db migrate
-python rcj_soccer db upgrade
-python run.py
+cd /srv/
+python3.6 -m rcj_soccer db init
+python3.6 -m rcj_soccer db migrate
+python3.6 -m rcj_soccer db upgrade
+python3.6 run.py

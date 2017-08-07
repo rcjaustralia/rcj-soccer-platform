@@ -41,9 +41,9 @@
 		var is_running = false;
 
 		function get_updates() {
-			$.getJSON("{{ url_for('update_result_game_state', id = game.id) }}", function(data) {
+			$.getJSON("{{ url_for('update_result_game_state', competition = comp.id, id = game.id) }}", function(data) {
 				if (data["error"]) {
-					window.location.href = "{{ url_for('login') }}";
+					window.location.href = "{{ url_for('login', competition = comp.id) }}";
 				}
 
 				$("#home-goals").text(data["home_goals"]);

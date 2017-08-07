@@ -2,6 +2,10 @@ from .base import db
 import datetime
 
 
+def _map(func, iter):
+    return list(map(func, iter))
+
+
 class Competition(db.Model):
     id = db.Column(db.String(64), primary_key=True)
     name = db.Column(db.String(128))
@@ -9,6 +13,7 @@ class Competition(db.Model):
     twitter_link = db.Column(db.String(64))
     event_sponsor_link = db.Column(db.String(128))
     event_sponsor_img = db.Column(db.String(200))
+    is_active = db.Column(db.Boolean, default=True)
 
 
 class User(db.Model):
@@ -72,10 +77,10 @@ class Team(db.Model):
     def score(self, finals_only=False):
         if self._score is not None:
             return self._score
-        goals = map(lambda game: game.home_goals - game.away_goals,
-                    self.get_home_games())
-        goals += map(lambda game: game.away_goals - game.home_goals,
-                     self.get_away_games())
+        goals = _map(lambda game: game.home_goals - game.away_goals,
+                     self.get_home_games())
+        goals += _map(lambda game: game.away_goals - game.home_goals,
+                      self.get_away_games())
         self._score = sum(map(lambda goals: 3 if goals >
                               0 else (1 if goals == 0 else 0), goals))
         return self._score
@@ -85,8 +90,8 @@ class Team(db.Model):
     def goals_for(self, finals_only=False):
         if self._goals_for is not None:
             return self._goals_for
-        goals = map(lambda game: game.home_goals, self.get_home_games())
-        goals += map(lambda game: game.away_goals, self.get_away_games())
+        goals = _map(lambda game: game.home_goals, self.get_home_games())
+        goals += _map(lambda game: game.away_goals, self.get_away_games())
         self._goals_for = sum(goals)
         return self._goals_for
 
@@ -95,8 +100,8 @@ class Team(db.Model):
     def goals_against(self, finals_only=False):
         if self._goals_against is not None:
             return self._goals_against
-        goals = map(lambda game: game.away_goals, self.get_home_games())
-        goals += map(lambda game: game.home_goals, self.get_away_games())
+        goals = _map(lambda game: game.away_goals, self.get_home_games())
+        goals += _map(lambda game: game.home_goals, self.get_away_games())
         self._goals_against = sum(goals)
         return self._goals_against
 

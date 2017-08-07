@@ -12,7 +12,7 @@ def send(to, message):
         "from": config.get("sms", "from").strip(),
         "message": message
     })
-    logger.info("SMS sent: {}", r.text)
+    logger.info("SMS sent: {0}".format(r.text))
 
 
 def balance():

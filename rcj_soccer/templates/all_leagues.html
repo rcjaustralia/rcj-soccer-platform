@@ -16,7 +16,7 @@
 			<tbody>
 			{% for league in leagues %}
 				<tr>
-					<td><a href="{{ url_for('league', id = league.id) }}">{{ league.name }}</a></td>
+					<td><a href="{{ url_for('league', competition = comp.id, id = league.id) }}">{{ league.name }}</a></td>
 					<td>{{ league.areas }}</td>
 					<td>{{ league.teams.count() }}</td>
 				</tr>
@@ -28,7 +28,7 @@
 		<h2>Create new league</h2>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('leagues') }}" method="post">
+		<form class="col s12" action="{{ url_for('leagues', competition = comp.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s12">
 					<input id="name" type="text" class="validate" minlength="3" name="name">

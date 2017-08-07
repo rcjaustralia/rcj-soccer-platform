@@ -5,10 +5,10 @@
 		<h1>Login</h1>
 	</div>
 	<div class="row">
-		<p>An SMS was sent to {{ phone }} with a token code.  Please enter it below or <a href="{{ url_for('login') }}">login</a> again to resend it.</p>
+		<p>An SMS was sent to {{ phone }} with a token code.  Please enter it below or <a href="{{ url_for('login', competition = comp.id) }}">login</a> again to resend it.</p>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('login_check', username = username) }}" method="post">
+		<form class="col s12" action="{{ url_for('login_check', competition = comp.id, username = username) }}" method="post">
 			<div class="row">
 				<div class="input-field col s8">
 					<input id="token" type="number" class="validate" min="100000" max="999999" name="token">

@@ -43,7 +43,7 @@ def draws_save(competition):
         db.session.add(game)
         db.session.commit()
     return render_template("draw_saved.html",
-                           auth=template(), comp=comp)
+                           auth=template(comp.id), comp=comp)
 
 
 def field(count, name):
@@ -53,7 +53,7 @@ def field(count, name):
 def show_draw_options(comp):
     leagues = League.query.filter_by(competition_id=comp.id).all()
     return render_template("draws.html", leagues=leagues,
-                           auth=template(), comp=comp)
+                           auth=template(comp.id), comp=comp)
 
 
 def next_round(teams):
@@ -64,7 +64,7 @@ def next_round(teams):
 
 
 def get_games(teams):
-    half = len(teams) / 2
+    half = len(teams) // 2
     home = teams[:half]
     away = teams[half:][::-1]
     return [{"home": home[i], "away": away[i]} for i in range(half)]
@@ -86,10 +86,8 @@ def show_draw(comp):
     real_teams = Team.query.filter_by(
         league_id=league_id).filter_by(is_system=False).all()
     has_blank = (team_count % 2 == 1)
-    teams = range(team_count + int(has_blank))
+    teams = list(range(team_count + int(has_blank)))  # emulate Python 2 range
     random.shuffle(teams)
-    # half = len(teams) / 2
-    # teams = teams[:half] + teams[half:][::-1]
     required_rounds = (team_count - 1) if not has_blank else team_count
 
     total_rounds = min(max_rounds, required_rounds * total_repeats)
@@ -142,19 +140,21 @@ def show_draw(comp):
 
     # Finals
     finals_size = finals_size  # i.e Top N
-    finals_games = finals_size / 2
+    finals_games = finals_size // 2
     logger.error(finals_games)
     logger.error(finals_size)
 
     finals_teams = []
     round_count = 1
-    logger.error("before", len(rounds))
+    logger.error("before {0}".format(len(rounds)))
+    max_rounds_count = 0
     while finals_games > 0:
         games = []
         current_time = current_time + timedelta(minutes=duration)
         for i in range(finals_games):
-            logger.error(round_count + 1, ": Top", i + 1, "vs"),
-            logger.error("Top", finals_games * 2 - i)
+            logger.error("{0}: Top {1} vs Top {2}".format(
+                round_count + 1, i + 1, finals_games * 2 - i)
+            )
             home_team = Team.query.filter_by(is_system=True).filter_by(
                 school="finals:top:" + str(i + 1)).filter_by(
                 league_id=league_id).first()
@@ -191,18 +191,24 @@ def show_draw(comp):
                 "start_time": str(current_time)
             }
 
+            max_rounds_count = max_rounds + round_count
+
             if i % fields == 0:
                 current_time = current_time + timedelta(minutes=duration)
             games.append(game)
             total += 1
         rounds.append(games)
         round_count += 1
-        finals_games = finals_games / 2
+        finals_games = finals_games // 2
 
     finals_teams.sort(key=lambda x: x.name)
-    logger.error("after", len(rounds))
+    logger.error("after {0}".format(len(rounds)))
+
+    # TODO: Fix this to be a more useful limit
+    max_rounds_count = 200
+
     return render_template("draws_modify.html", rounds=rounds,
                            teams=real_teams, total=total, total_fields=fields,
-                           total_rounds=total_rounds, league_id=league_id,
-                           auth=template(), duration=duration, comp=comp,
-                           finals_teams=finals_teams)
+                           total_rounds=max_rounds_count, league_id=league_id,
+                           auth=template(comp.id), duration=duration,
+                           comp=comp, finals_teams=finals_teams)

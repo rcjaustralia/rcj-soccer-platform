@@ -16,7 +16,7 @@
 			<tbody>
 			{% for team in teams %}
 				<tr>
-					<td><a href="{{ url_for('team', id = team.id) }}">{{ team.name }}</a></td>
+					<td><a href="{{ url_for('team', competition = comp.id, id = team.id) }}">{{ team.name }}</a></td>
 					<td>{{ team.school }}</td>
 					<td>{{ team.league.name }}</td>
 				</tr>
@@ -28,7 +28,7 @@
 		<h2>Create new team</h2>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('teams') }}" method="post">
+		<form class="col s12" action="{{ url_for('teams', competition = comp.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s6">
 					<input id="name" type="text" class="validate" minlength="1" name="name">
@@ -59,12 +59,12 @@
 		<h2>Create many teams</h2>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('teams') }}" method="post">
+		<form class="col s12" action="{{ url_for('teams', competition = comp.id) }}" method="post">
 			<input type="hidden" name="bulk-add" value="true">
 			<div class="row">
 				<div class="input-field col s12">
 					<textarea name="csv-data" class="materialize-textarea" id="csv-data"></textarea>
-					<label for="csv-data">Team Data</label>
+					<label for="csv-data">Team Data (name, school)</label>
 				</div>
 			</div>
 			<div class="row">

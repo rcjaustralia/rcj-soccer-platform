@@ -26,4 +26,4 @@ def show_form(comp):
         competition_id=comp.id).order_by(User.username.asc()).all()
     balance = sms.balance()
     return render_template("messaging.html", users=users, comp=comp,
-                           auth=template(), balance=balance)
+                           auth=template(comp.id), balance=balance)

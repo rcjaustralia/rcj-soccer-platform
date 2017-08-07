@@ -5,7 +5,7 @@
 		<h1>Referee</h1>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('referee_game_end', id = game.id) }}" method="post">
+		<form class="col s12" action="{{ url_for('referee_game_end', competition = comp.id, id = game.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s6">
 					<input type="text" id="home_team" value="{{ game.home_team.name }}" readonly>
@@ -40,7 +40,7 @@
 			</div>
 			<div class="row">
 				<div class="col s6">
-					<a href="{{ url_for('referee_game', id = game.id) }}" class="btn waves-effect waves-light btn-large">Back</a>
+					<a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Back</a>
 				</div>
 				<div class="col s6">
 					<button class="btn waves-effect waves-light btn-large" type="submit" name="action" value="save">Submit

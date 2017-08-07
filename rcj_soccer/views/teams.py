@@ -40,7 +40,7 @@ def show_all_teams(comp):
     ).all()
     leagues = League.query.filter_by(competition_id=comp.id).all()
     return render_template("all_teams.html", teams=teams, comp=comp,
-                           leagues=leagues, auth=template())
+                           leagues=leagues, auth=template(comp.id))
 
 
 def create_new_team(comp):
@@ -70,7 +70,7 @@ def show_team(comp, id):
     team = Team.query.filter_by(id=int(id)).one()
     leagues = League.query.filter_by(competition_id=comp.id).all()
     return render_template("team.html", team=team, comp=comp,
-                           leagues=leagues, auth=template())
+                           leagues=leagues, auth=template(comp.id))
 
 
 def edit_team(comp, id):

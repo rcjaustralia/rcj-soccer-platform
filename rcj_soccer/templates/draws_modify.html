@@ -5,7 +5,7 @@
 		<h1>Create Draw</h1>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('draws_save') }}" method="post">
+		<form class="col s12" action="{{ url_for('draws_save', competition = comp.id) }}" method="post">
 			<input type="hidden" name="game_count" id="game_count" value="{{ total }}">
 			<input type="hidden" name="league_id" value="{{ league_id }}">
 			{% for round in rounds %}
@@ -16,7 +16,7 @@
 					<label for="g{{ game.index }}_round">Round</label>
 				</div>
 				<div class="input-field col s1">
-					<input id="g{{ game.index }}_field" type="number" class="validate" min="1" max="{{ total_fields }}" name="g{{ game.index }}_field" value="{{ game.field }}">
+					<input id="g{{ game.index }}_field" type="number" class="validate" min="0" max="{{ total_fields }}" name="g{{ game.index }}_field" value="{{ game.field }}">
 					<label for="g{{ game.index }}_field">Field</label>
 				</div>
 				<div class="input-field col s4">
@@ -57,7 +57,7 @@
 			{% endfor %}
 			<div class="row">
 				<div class="input-field col s6">
-					<a href="{{ url_for('draws') }}" class="btn waves-effect waves-light btn-large red">Back
+					<a href="{{ url_for('draws', competition = comp.id) }}" class="btn waves-effect waves-light btn-large red">Back
 					</a>
 				</div>
 				<div class="input-field col s6">

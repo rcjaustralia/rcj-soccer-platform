@@ -35,4 +35,4 @@ def update_result_game_state(competition, id):
 def result_show_game(comp, id):
     game = SoccerGame.query.filter_by(id=id).one()
     return render_template("liveresults.html", game=game,
-                           auth=template(), comp=comp)
+                           auth=template(comp.id), comp=comp)

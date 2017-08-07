@@ -5,7 +5,7 @@
 		<h1>Create Draw</h1>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('draws') }}" method="post">
+		<form class="col s12" action="{{ url_for('draws', competition = comp.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s3">
 					<select id="league" name="league">
@@ -17,7 +17,7 @@
 				</div>
 				<div class="input-field col s3">
 					<input id="game_duration" type="number" class="validate" min="1" name="game_duration">
-					<label for="game_duration">Game Duration</label>
+					<label for="game_duration">Game Duration (mins)</label>
 				</div>
 				<div class="input-field col s3">
 					<input id="round" type="number" class="validate" min="1" name="round">
@@ -26,7 +26,7 @@
 			</div>
 			<div class="row">
 				<div class="input-field col s3">
-					<input id="start_time" type="text" name="start_time">
+					<input id="start_time" type="text" name="start_time" placeholder="YYYY-MM-DD HH:MM">
 					<label for="start_time">Start Time</label>
 				</div>
 				<div class="input-field col s3">

@@ -6,12 +6,14 @@ from rcj_soccer.views.auth import template
 from rcj_soccer.views.competition import get_competition
 
 
-@app.route("/<competition>/results", methods=["GET", "POST"])
+@app.route("/<competition>", methods=["GET", "POST"])
 def results(competition):
     comp = get_competition(competition)
     # now1 = datetime.now()
     leagues = League.query.filter_by(competition_id=comp.id).all()
-    teams = Team.query.filter_by(is_system=False, competition_id=comp.id).all()
+    teams = Team.query.filter_by(is_system=False).filter(
+        Team.league.has(competition_id=comp.id)
+    ).all()
     # now2 = datetime.now()
     sorted_data = {}
     for team in teams:
@@ -22,7 +24,11 @@ def results(competition):
 
     for league in sorted_data.keys():
         # sorted_data[league]["teams"].sort(key=lambda t: t.name + t.school)
-        sorted_data[league]["teams"].sort(cmp=lambda t, o: o.compare(t))
+        # sorted_data[league]["teams"].sort(cmp=lambda t, o: o.compare(t))
+        sorted_data[league]["teams"].sort(key=lambda team: (
+            -1 * team.score(), -1 * team.goal_difference(),
+            -1 * team.goals_for(), -1 * team.games_played(), team.name
+        ))
 
     # now3 = datetime.now()
     games = SoccerGame.query.filter(
@@ -41,7 +47,7 @@ def results(competition):
         game.is_bye()
         sorted_data[game.league_id]["games"].append(game)
     # now5 = datetime.now()
-    a = template()
+    a = template(comp.id)
     lc = max(1, int(12 / max(len(leagues), 1)))
     # now6 = datetime.now()
     rt = render_template("results.html", leagues=leagues, comp=comp,

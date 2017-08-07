@@ -34,7 +34,7 @@ def league(competition, id):
 def show_all_leagues(comp):
     leagues = League.query.filter_by(competition_id=comp.id).all()
     return render_template("all_leagues.html",
-                           leagues=leagues, auth=template(), comp=comp)
+                           leagues=leagues, auth=template(comp.id), comp=comp)
 
 
 def create_new_league(comp):
@@ -51,7 +51,7 @@ def create_new_league(comp):
 def show_league(comp, id):
     league = League.query.filter_by(id=int(id)).one()
     return render_template("league.html", league=league,
-                           auth=template(), comp=comp)
+                           auth=template(comp.id), comp=comp)
 
 
 def edit_league(comp, id):

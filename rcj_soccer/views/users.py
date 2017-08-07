@@ -38,8 +38,8 @@ def show_all_users(comp):
     ).order_by(
         User.username.asc()
     ).all()
-    return render_template("all_users.html", users=users, auth=template(),
-                           comp=comp)
+    return render_template("all_users.html", users=users,
+                           auth=template(comp.id), comp=comp)
 
 
 def create_new_user(comp):
@@ -54,7 +54,7 @@ def create_new_user(comp):
              "Welcome to the RCJ soccer platform at http://soccer.rcja.org" +
              " Your username is: " + user.username)
 
-    return show_all_users()
+    return show_all_users(comp)
 
 
 def show_user(comp, username):
@@ -62,7 +62,8 @@ def show_user(comp, username):
         username=username,
         competition_id=comp.id
     ).one()
-    return render_template("user.html", user=user, auth=template(), comp=comp)
+    return render_template("user.html", user=user, auth=template(comp.id),
+                           comp=comp)
 
 
 def edit_user(comp, username):

@@ -19,7 +19,7 @@
 			<tbody>
 			{% for game in games %}
 				<tr>
-					<td><a href="{{ url_for('game', id =game.id) }}">{{ game.league.name }}</a></td>
+					<td><a href="{{ url_for('game', competition = comp.id, id =game.id) }}">{{ game.league.name }}</a></td>
 					<td>{{ game.round }}</td>
 					<td>{{ game.field }}</td>
 					<td>{{ game.scheduled_time }}</td>
@@ -34,7 +34,7 @@
 		<h2>Create new game</h2>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('games') }}" method="post">
+		<form class="col s12" action="{{ url_for('games', competition = comp.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s4">
 					<select id="league" name="league">
@@ -81,10 +81,10 @@
 			</div>
 			<div class="row">
 				<div class="col s4">
-					<a href="{{ url_for('games_delete_all') }}" class="btn waves-effect waves-light btn-large red">Delete All Unplayed Games</a>
+					<a href="{{ url_for('games_delete_all', competition = comp.id) }}" class="btn waves-effect waves-light btn-large red">Delete All Unplayed Games</a>
 				</div>
 				<div class="col s4">
-					<a href="{{ url_for('games_populate_all') }}" class="btn waves-effect waves-light btn-large">Calculate Finals</a>
+					<a href="{{ url_for('games_populate_all', competition = comp.id) }}" class="btn waves-effect waves-light btn-large">Calculate Finals</a>
 				</div>
 			</div>
 		</form>

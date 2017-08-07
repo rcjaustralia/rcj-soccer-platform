@@ -79,13 +79,13 @@
 	</div>
 	<div class="row">
 		<div class="col s6">
-			<a href="{{ url_for('referee_game_end', id = game.id) }}" class="btn waves-effect waves-light btn-large">Finish Game</a>
+			<a href="{{ url_for('referee_game_end', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Finish Game</a>
 		</div>
 		<div class="col s6">
 			{% if switch_side %}
-			<a href="{{ url_for('referee_game', id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
+			<a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
 			{% else %}
-			<a href="{{ url_for('referee_game_2', id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
+			<a href="{{ url_for('referee_game_2', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
 			{% endif %}
 		</div>
 	</div>
@@ -152,10 +152,10 @@
 		var game_hidden = false;
 
 		function get_updates(now) {
-			$.getJSON("{{ url_for('update_game_state', id = game.id) }}", function(data) {
+			$.getJSON("{{ url_for('update_game_state', competition = comp.id, id = game.id) }}", function(data) {
 				//console.log(performance.now());
 				if (data["error"]) {
-					window.location.href = "{{ url_for('login') }}";
+					window.location.href = "{{ url_for('login', competition = comp.id) }}";
 				}
 
 				el_home_goals.textContent = data["home_goals"];
@@ -209,7 +209,7 @@
 			if (start == "None") {
 				diff = goal * 60000;
 			} else {
-				diff = Math.max(0, goal * 60000 - (new Date()).getTime() + (new Date(start + "+10:00")).getTime());
+				diff = Math.max(0, goal * 60000 - (new Date()).getTime() + (new Date(start + "+00:00")).getTime());
 			}
 			var mins = Math.min(59, Math.floor(diff / 60000)) + "";
 			var secs = Math.min(59, Math.round(((diff % 60000) / 1000))) + "";
@@ -303,25 +303,25 @@
 
 			el_timer_row = $("#timer-row")[0];
 			
-			set_event("#next", "{{ url_for('next_game_state', id = game.id) }}");
-			set_event("#prev", "{{ url_for('prev_game_state', id = game.id) }}");
-			set_event("#home-goal", "{{ url_for('score_home_goal', id = game.id) }}");
-			set_event("#away-goal", "{{ url_for('score_away_goal', id = game.id) }}");
-			set_event("#home-cancel-goal", "{{ url_for('score_home_goal_cancel', id = game.id) }}");
-			set_event("#away-cancel-goal", "{{ url_for('score_away_goal_cancel', id = game.id) }}");
+			set_event("#next", "{{ url_for('next_game_state', competition = comp.id, id = game.id) }}");
+			set_event("#prev", "{{ url_for('prev_game_state', competition = comp.id, id = game.id) }}");
+			set_event("#home-goal", "{{ url_for('score_home_goal', competition = comp.id, id = game.id) }}");
+			set_event("#away-goal", "{{ url_for('score_away_goal', competition = comp.id, id = game.id) }}");
+			set_event("#home-cancel-goal", "{{ url_for('score_home_goal_cancel', competition = comp.id, id = game.id) }}");
+			set_event("#away-cancel-goal", "{{ url_for('score_away_goal_cancel', competition = comp.id, id = game.id) }}");
 
-			set_event("#home-1-damage", "{{ url_for('damage_home_1', id = game.id) }}");
-			set_event("#home-2-damage", "{{ url_for('damage_home_2', id = game.id) }}");
-			set_event("#away-1-damage", "{{ url_for('damage_away_1', id = game.id) }}");
-			set_event("#away-2-damage", "{{ url_for('damage_away_2', id = game.id) }}");
-			set_event("#timer-toggle", "{{ url_for('update_game_clock', id = game.id) }}");
+			set_event("#home-1-damage", "{{ url_for('damage_home_1', competition = comp.id, id = game.id) }}");
+			set_event("#home-2-damage", "{{ url_for('damage_home_2', competition = comp.id, id = game.id) }}");
+			set_event("#away-1-damage", "{{ url_for('damage_away_1', competition = comp.id, id = game.id) }}");
+			set_event("#away-2-damage", "{{ url_for('damage_away_2', competition = comp.id, id = game.id) }}");
+			set_event("#timer-toggle", "{{ url_for('update_game_clock', competition = comp.id, id = game.id) }}");
 
 			$("#flip-colours").click(function() {
 				flip_colors();
 			});
 
 			$(".request").click(function(e) {
-				var url = "{{ url_for('send_request', id = game.id, rtype = 'RTYPE') }}";
+				var url = "{{ url_for('send_request', competition = comp.id, id = game.id, rtype = 'RTYPE') }}";
 				$.get(url.replace("RTYPE", $(this).data("request-type")), function() {
 					Materialize.toast("Request Sent", 2000);
 				});

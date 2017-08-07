@@ -44,7 +44,7 @@ def referee_game_end(competition, id):
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         game = SoccerGame.query.filter_by(id=id).one()
-        return render_template("referee_end.html", auth=template(),
+        return render_template("referee_end.html", auth=template(comp.id),
                                game=game, comp=comp)
     else:
         game = SoccerGame.query.filter_by(id=id).one()
@@ -52,9 +52,9 @@ def referee_game_end(competition, id):
             "winner_agrees", False) == "true")
         game.loser_agrees = (request.form.get("loser_agrees", False) == "true")
         game.game_finished = True
-        game.ref_id = check_user().username
+        game.ref_id = check_user(comp.id).username
         db.session.commit()
-        return redirect("referee", competition=comp.id)
+        return redirect(url_for("referee", competition=comp.id))
 
 
 @app.route("/<competition>/referee/<id>/state", methods=["GET"])
@@ -287,7 +287,7 @@ def send_request(competition, id, rtype):
 
     req = Request()
     req.request_type_id = int(rtype)
-    req.user_id = check_user().username
+    req.user_id = check_user(comp.id).username
     req.game_id = int(id)
 
     db.session.add(req)
@@ -312,7 +312,7 @@ def show_game(comp, id, switch):
     ).order_by(
         RequestType.priority.desc(), RequestType.name.asc()
     ).all()
-    return render_template("referee.html", game=game, auth=template(),
+    return render_template("referee.html", game=game, auth=template(comp.id),
                            switch_side=switch, request_types=request_types,
                            comp=comp)
 
@@ -324,5 +324,5 @@ def show_all_unfinished_games(comp):
                 SoccerGame.league.has(competition_id=comp.id))\
         .order_by(SoccerGame.scheduled_time.asc(), SoccerGame.round.asc(),
                   SoccerGame.field.asc()).all()
-    return render_template("referee_games.html", games=games, auth=template(),
-                           comp=comp)
+    return render_template("referee_games.html", games=games,
+                           auth=template(comp.id), comp=comp)

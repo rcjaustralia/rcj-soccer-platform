@@ -42,9 +42,9 @@ def login_check(competition, username):
     else:
         token = int(request.form["token"])
         if token == user.auth_token and datetime.now() <= user.auth_expires:
-            user.session_token = hashlib.sha512("".join(
+            user.session_token = hashlib.sha512(("".join(
                 map(str, [user.username, user.phone, datetime.now(), token])
-            )).hexdigest()
+            )).encode("utf-8")).hexdigest()
             user.session_expires = datetime.now() + timedelta(hours=12)
             user.auth_token = None
             user.auth_expires = None
@@ -52,7 +52,7 @@ def login_check(competition, username):
             session["username"] = user.username
             session["token"] = user.session_token
             return render_template("login_done.html",
-                                   auth=template(), comp=comp)
+                                   auth=template(comp.id), comp=comp)
         else:
             db.session.commit()
             return show_token_form(user.username, user.phone, comp)
@@ -61,11 +61,12 @@ def login_check(competition, username):
 def show_token_form(username, phone, comp):
     phone = ("*" * (len(phone) - 3)) + phone[-3:]
     return render_template("login_token.html", username=username,
-                           phone=phone, auth=template(), comp=comp)
+                           phone=phone, auth=template(comp.id), comp=comp)
 
 
 def show_username_form(comp):
-    return render_template("login_username.html", auth=template(), comp=comp)
+    return render_template("login_username.html", auth=template(comp.id),
+                           comp=comp)
 
 
 def send_sms(phone, token):
@@ -77,12 +78,13 @@ def send_sms(phone, token):
 
 @app.route("/<competition>/logout")
 def logout(competition):
-    user = check_user(competition.id)
+    comp = get_competition(competition)
+    user = check_user(comp.id)
     if user:
         user.session_token = None
         user.session_expires = None
         db.session.commit()
-    return redirect(url_for("index"))
+    return redirect(url_for("results", competition=comp.id))
 
 
 def check_user(comp_id, admin=False):
@@ -107,9 +109,9 @@ def check_user(comp_id, admin=False):
     return user
 
 
-def template(fixed=False):
+def template(comp_id, fixed=False):
     return {
-        "is_logged_in": check_user(),
-        "is_admin": check_user(True),
+        "is_logged_in": check_user(comp_id),
+        "is_admin": check_user(comp_id, True),
         "fixed_navbar": fixed
     }

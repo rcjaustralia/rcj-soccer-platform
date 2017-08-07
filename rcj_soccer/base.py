@@ -21,8 +21,3 @@ migrate = Migrate(app, db)
 
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
-
-
-@app.route("/")
-def index():
-    return redirect(url_for("results"))

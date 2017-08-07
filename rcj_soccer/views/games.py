@@ -28,7 +28,7 @@ def games_delete_all(competition):
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         db.session.query(SoccerGame).filter(SoccerGame.game_finished == False)\
-            .filter(SoccerGame.league.competition_id == comp.id).delete()
+            .filter(SoccerGame.league.has(competition_id=comp.id)).delete()
         db.session.commit()
         return redirect(url_for("games", competition=comp.id))
 
@@ -54,16 +54,16 @@ def game(competition, id):
         return edit_game(comp, int(id))
 
 
-def show_all_games(competition):
+def show_all_games(comp):
     games = SoccerGame.query.filter(
-        SoccerGame.league.competition_id == competition.id
+        SoccerGame.league.has(competition_id=comp.id)
     ).all()
-    leagues = League.query.filter_by(competition_id=competition.id).all()
+    leagues = League.query.filter_by(competition_id=comp.id).all()
     teams = Team.query.filter(
-        Team.league.competition_id == competition.id
+        Team.league.has(competition_id=comp.id)
     ).all()
     return render_template("all_games.html", games=games, leagues=leagues,
-                           teams=teams, auth=template(), comp=competition)
+                           teams=teams, auth=template(comp.id), comp=comp)
 
 
 def create_new_game(comp):
@@ -83,10 +83,10 @@ def show_game(comp, id):
     game = SoccerGame.query.filter_by(id=int(id)).one()
     leagues = League.query.filter_by(competition_id=comp.id).all()
     teams = Team.query.filter(
-        Team.league.competition_id == comp.id
+        Team.league.has(competition_id=comp.id)
     ).all()
     return render_template("game.html", game=game, teams=teams,
-                           leagues=leagues, auth=template(), comp=comp)
+                           leagues=leagues, auth=template(comp.id), comp=comp)
 
 
 def edit_game(comp, id):
@@ -114,7 +114,7 @@ def edit_game(comp, id):
 
 def calculate_system_teams(comp):
     games = SoccerGame.query.filter(
-        SoccerGame.league.competition_id == comp.id
+        SoccerGame.league.has(competition_id=comp.id)
     ).all()
     games = filter(lambda g: g.is_system_game(), games)
     for game in games:
@@ -125,10 +125,11 @@ def calculate_system_teams(comp):
         finals_only = SoccerGame.query.filter_by(is_final=True).filter(
             SoccerGame.round < game.round
         ).filter(
-            SoccerGame.league.competition_id == comp.id
+            SoccerGame.league.has(competition_id=comp.id)
         ).count() > 0
         teams = Team.query.filter_by(is_system=False).filter_by(
-            league_id=game.league_id).all()
+            league_id=game.league_id
+        ).all()
         teams.sort(cmp=lambda a, b: b.compare(a, finals_only))
         logger.error("Only consider finals:", finals_only)
         home_index = int(game.home_team.school.replace("finals:top:", "")) - 1

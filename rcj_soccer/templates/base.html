@@ -25,46 +25,44 @@
 				<a href="#" data-activates="collapsed-nav" class="button-collapse"><i class="material-icons">menu</i></a>
 				<ul class="left hide-on-med-and-down">
 					<li><a href="/">Home</a></li>
-					<li><a href="{{ url_for('results') }}">Results</a></li>
-					<li><a href="{{ url_for('rules') }}">Rules</a></li>
+					<li><a href="{{ url_for('results', competition=comp.id) }}">Results</a></li>
 					{% if auth.is_admin %}
-					<li><a href="{{ url_for('draws') }}">Draws</a></li>
-					<li><a href="{{ url_for('games') }}">Games</a></li>
-					<li><a href="{{ url_for('leagues') }}">Leagues</a></li>
-					<li><a href="{{ url_for('messaging') }}">Messaging</a></li>
-					<li><a href="{{ url_for('request_types') }}">Request Types</a></li>
-					<li><a href="{{ url_for('teams') }}">Teams</a></li>
-					<li><a href="{{ url_for('users') }}">Users</a></li>
+					<li><a href="{{ url_for('draws', competition=comp.id) }}">Draws</a></li>
+					<li><a href="{{ url_for('games', competition=comp.id) }}">Games</a></li>
+					<li><a href="{{ url_for('leagues', competition=comp.id) }}">Leagues</a></li>
+					<li><a href="{{ url_for('messaging', competition=comp.id) }}">Messaging</a></li>
+					<li><a href="{{ url_for('request_types', competition=comp.id) }}">Request Types</a></li>
+					<li><a href="{{ url_for('teams', competition=comp.id) }}">Teams</a></li>
+					<li><a href="{{ url_for('users', competition=comp.id) }}">Users</a></li>
 					{% endif %}
 					{% if auth.is_logged_in %}
-					<li><a href="{{ url_for('scrutineer_teams') }}">Scrutineer</a></li>
-					<li><a href="{{ url_for('referee') }}">Referee</a></li>
-					<li><a href="{{ url_for('request') }}">Requests</a></li>
-					<li><a href="{{ url_for('logout') }}">Logout</a></li>
+					<li><a href="{{ url_for('scrutineer_teams', competition=comp.id) }}">Scrutineer</a></li>
+					<li><a href="{{ url_for('referee', competition=comp.id) }}">Referee</a></li>
+					<li><a href="{{ url_for('request', competition=comp.id) }}">Requests</a></li>
+					<li><a href="{{ url_for('logout', competition=comp.id) }}">Logout</a></li>
 					{% else %}
-					<li><a href="{{ url_for('login') }}">Login</a></li>
+					<li><a href="{{ url_for('login', competition=comp.id) }}">Login</a></li>
 					{% endif %}
 				</ul>
 				<ul class="side-nav" id="collapsed-nav">
 					<li><a href="/">All Competitions</a></li>
-					<li><a href="{{ url_for('results') }}">Results</a></li>
-					<li><a href="{{ url_for('rules') }}">Rules</a></li>
+					<li><a href="{{ url_for('results', competition=comp.id) }}">Results</a></li>
 					{% if auth.is_admin %}
-					<li><a href="{{ url_for('draws') }}">Draws</a></li>
-					<li><a href="{{ url_for('games') }}">Games</a></li>
-					<li><a href="{{ url_for('leagues') }}">Leagues</a></li>
-					<li><a href="{{ url_for('messaging') }}">Messaging</a></li>
-					<li><a href="{{ url_for('request_types') }}">Request Types</a></li>
-					<li><a href="{{ url_for('teams') }}">Teams</a></li>
-					<li><a href="{{ url_for('users') }}">Users</a></li>
+					<li><a href="{{ url_for('draws', competition=comp.id) }}">Draws</a></li>
+					<li><a href="{{ url_for('games', competition=comp.id) }}">Games</a></li>
+					<li><a href="{{ url_for('leagues', competition=comp.id) }}">Leagues</a></li>
+					<li><a href="{{ url_for('messaging', competition=comp.id) }}">Messaging</a></li>
+					<li><a href="{{ url_for('request_types', competition=comp.id) }}">Request Types</a></li>
+					<li><a href="{{ url_for('teams', competition=comp.id) }}">Teams</a></li>
+					<li><a href="{{ url_for('users', competition=comp.id) }}">Users</a></li>
 					{% endif %}
 					{% if auth.is_logged_in %}
-					<li><a href="{{ url_for('scrutineer_teams') }}">Scrutineer</a></li>
-					<li><a href="{{ url_for('referee') }}">Referee</a></li>
-					<li><a href="{{ url_for('request') }}">Requests</a></li>
-					<li><a href="{{ url_for('logout') }}">Logout</a></li>
+					<li><a href="{{ url_for('scrutineer_teams', competition=comp.id) }}">Scrutineer</a></li>
+					<li><a href="{{ url_for('referee', competition=comp.id) }}">Referee</a></li>
+					<li><a href="{{ url_for('request', competition=comp.id) }}">Requests</a></li>
+					<li><a href="{{ url_for('logout', competition=comp.id) }}">Logout</a></li>
 					{% else %}
-					<li><a href="{{ url_for('login') }}">Login</a></li>
+					<li><a href="{{ url_for('login', competition=comp.id) }}">Login</a></li>
 					{% endif %}
 				</ul>
 				{% if auth.fixed_navbar %}
@@ -106,8 +104,8 @@
 							</div>
 							<div class="col s12 m4">
 								<h5>Event</h5>
-								<a href="https://www.unsw.edu.au/">
-									<img alt="University of New South Wales" src="/static/images/sponsors/unsw.png">
+								<a href="{{ comp.event_sponsor_link }}">
+									<img alt="Competition Event Sponsor" src="{{ comp.event_sponsor_img }}">
 								</a>
 							</div>
 						</div>
@@ -115,12 +113,8 @@
 					<div class="col s4">
 						<h4 class="black-text">Social</h4>
 						<ul>
-							<li><a href="https://www.facebook.com/robocupjunioraustralia" class="grey-text text-darken-3">Facebook</a></li>
-							<li>
-								<a href="snapchat://" class="grey-text text-darken-3 hide-on-med-and-up" title="We have a Snapchat filter!">Snapchat</a>
-								<a href="https://www.snapchat.com/" class="grey-text text-darken-3 hide-on-small-only" title="We have a Snapchat filter!">Snapchat</a>
-							</li>
-							<li><a href="https://www.twitter.com/?status=%23RCJA" class="grey-text text-darken-3">Twitter</a></li>
+							<li><a href="https://www.facebook.com/{{ comp.fb_link }}" class="grey-text text-darken-3">Facebook</a></li>
+							<li><a href="https://www.twitter.com/?status={{ comp.twitter_link|urlencode }}" class="grey-text text-darken-3">Twitter</a></li>
 						</ul>
 					</div>
 				</div>

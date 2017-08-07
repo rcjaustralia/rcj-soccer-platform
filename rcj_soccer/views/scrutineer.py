@@ -16,7 +16,7 @@ def scrutineer_teams(competition):
 
 
 @app.route("/<competition>/scrutineer/delete_all", methods=["GET", "POST"])
-def scrutineer_delete_all():
+def scrutineer_delete_all(competition):
     comp = get_competition(competition)
     if not check_user(comp.id, False):
         return redirect(url_for("login"), competition=comp.id)
@@ -66,13 +66,14 @@ def show_all_teams(comp):
         (Team.scrutineer_1 == False) |
         (Team.scrutineer_2 == False)
     ).order_by(Team.league_id.asc(), Team.name.asc()).all()
-    return render_template("all_scrutineer.html", teams=teams, auth=template())
+    return render_template("all_scrutineer.html", teams=teams,
+                           auth=template(comp.id), comp=comp)
 
 
 def show_team(comp, id):
     team = Team.query.filter_by(id=int(id)).one()
-    return render_template("scrutineer.html", team=team, auth=template(),
-                           comp=comp)
+    return render_template("scrutineer.html", team=team,
+                           auth=template(comp.id), comp=comp)
 
 
 def save_team(comp, id):

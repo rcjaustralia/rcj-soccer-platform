@@ -5,7 +5,7 @@
 		<h1>{{ league.name }}</h1>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('league', id = league.id) }}" method="post">
+		<form class="col s12" action="{{ url_for('league', competition = comp.id, id = league.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s12">
 					<input id="name" type="text" class="validate" minlength="3" name="name" value="{{ league.name }}">
@@ -21,7 +21,7 @@
 			<div class="row">
 				<div class="input-field col s4">
 					<input id="duration" type="number" class="validate" min="1" max="10" name="duration" value="{{ league.duration }}">
-					<label for="duration">Half Duration</label>
+					<label for="duration">Half Duration (mins)</label>
 				</div>
 				<div class="input-field col s4">
 					<input id="fields" type="number" class="validate" min="1" max="10" name="fields" value="{{ league.areas }}">

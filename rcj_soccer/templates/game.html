@@ -5,7 +5,7 @@
 		<h1>Game</h1>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('game', id = game.id) }}" method="post">
+		<form class="col s12" action="{{ url_for('game', competition = comp.id, id = game.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s4">
 					<select id="league" name="league">

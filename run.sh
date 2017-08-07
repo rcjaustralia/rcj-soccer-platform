@@ -10,7 +10,19 @@ echo "pass = $DB_PASS"
 echo "name = $DB_NAME"
 echo "CREATE DATABASE IF NOT EXISTS $DB_NAME;" | mysql -u $DB_USER -p$DB_PASS -h $DB_HOST --protocol TCP
 cd /srv/
-python3.6 -m rcj_soccer db init
-python3.6 -m rcj_soccer db migrate
-python3.6 -m rcj_soccer db upgrade
+if [ ! -z "$RCJ_DATABASE_MIGRATE" ]; then
+    if [ ! -z "$RCJ_DATABASE_INIT" ]; then
+        python3.6 -m rcj_soccer db init
+    else
+        mkdir -p /srv/migrations
+        cp -R /srv/migration_data/* /srv/migrations/
+    fi
+    python3.6 -m rcj_soccer db migrate
+    python3.6 -m rcj_soccer db upgrade
+
+    rm -rf /srv/migration_data/*
+    cp -R /srv/migrations/* /srv/migration_data/
+fi
+ls .
+echo "now calling run..."
 python3.6 run.py

@@ -5,7 +5,7 @@
 		<h1>Login</h1>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('login') }}" method="post">
+		<form class="col s12" action="{{ url_for('login', competition = comp.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s8">
 					<input id="username" type="text" class="validate" minlength="3" name="username">

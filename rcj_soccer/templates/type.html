@@ -5,7 +5,7 @@
 		<h1>{{ rtype.name }}</h1>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('request_type', id = rtype.id) }}" method="post">
+		<form class="col s12" action="{{ url_for('request_type', competition = comp.id, id = rtype.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s4">
 					<input id="name" type="text" class="validate" minlength="3" name="name" value="{{ rtype.name }}">

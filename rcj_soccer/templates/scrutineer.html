@@ -5,7 +5,7 @@
 		<h1>Scrutineer</h1>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('scrutineer', id =  team.id ) }}" method="post">
+		<form class="col s12" action="{{ url_for('scrutineer', competition = comp.id, id =  team.id ) }}" method="post">
 			<div class="row">
 				<div class="input-field col s4">
 					<input id="name" type="text" class="validate" minlength="1" name="name" value="{{ team.name }}" readonly>
@@ -50,14 +50,14 @@
 				</div>
 			</div>
 		</form>
-		<script type="text/javascript" src="https://robocup.tech/static/js/dymo.js"></script>
+		<script type="text/javascript" src="/static/js/dymo.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				var robots = 0;
 
 				function print(n) {
 					robots++;
-					$.get("{{ url_for('label', id = team.id, n = '_N_') }}".replace("_N_", n), function(xml) {
+					$.get("{{ url_for('label', competition = comp.id, id = team.id, n = '_N_') }}".replace("_N_", n), function(xml) {
 						var label = dymo.label.framework.openLabelXml(xml);
 						var printers = dymo.label.framework.getPrinters();
 						var name = false;

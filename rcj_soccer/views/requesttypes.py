@@ -33,7 +33,7 @@ def show_all_types(comp):
     users = User.query.filter_by(is_active=True, competition_id=comp.id)\
         .order_by(User.username.asc()).all()
     return render_template("all_types.html", types=types, comp=comp,
-                           auth=template(), users=users)
+                           auth=template(comp.id), users=users)
 
 
 def create_new_type(comp):
@@ -49,7 +49,7 @@ def create_new_type(comp):
         rtype.user_id = request.form["user_id"]
     db.session.add(rtype)
     db.session.commit()
-    return show_all_types()
+    return show_all_types(comp)
 
 
 def show_type(comp, id):
@@ -59,7 +59,7 @@ def show_type(comp, id):
         is_active=True, competition_id=comp.id).order_by(
         User.username.asc()).all()
     return render_template("type.html", rtype=rtype, comp=comp,
-                           auth=template(), users=users)
+                           auth=template(comp.id), users=users)
 
 
 def edit_type(comp, id):
@@ -78,4 +78,4 @@ def edit_type(comp, id):
         else:
             rtype.user_id = request.form["user_id"]
     db.session.commit()
-    return show_all_types()
+    return show_all_types(comp)

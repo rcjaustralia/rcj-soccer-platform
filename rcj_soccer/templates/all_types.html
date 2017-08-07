@@ -17,7 +17,7 @@
 			<tbody>
 			{% for rtype in types %}
 				<tr>
-					<td><a href="{{ url_for('request_type', id = rtype.id) }}">{{ rtype.name }}</a></td>
+					<td><a href="{{ url_for('request_type', competition = comp.id, id = rtype.id) }}">{{ rtype.name }}</a></td>
 					<td>{{ rtype.priority }}</td>
 					<td>{% if rtype.only_admin %}Yes{% else %}<em>No</em>{% endif %}</td>
 					<td>{% if rtype.send_text %}{{ rtype.user.username }}{% else %}<em>nobody</em>{% endif %}</td>
@@ -30,7 +30,7 @@
 		<h2>Create new request type</h2>
 	</div>
 	<div class="row">
-		<form class="col s12" action="{{ url_for('request_types') }}" method="post">
+		<form class="col s12" action="{{ url_for('request_types', competition = comp.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s4">
 					<input id="name" type="text" class="validate" minlength="3" name="name">

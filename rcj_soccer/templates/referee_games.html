@@ -19,12 +19,12 @@
 			<tbody>
 			{% for game in games %}
 				<tr>
-					<td><a href="{{ url_for('referee_game', id = game.id) }}">{{ game.league.name }}</a></td>
-					<td><a href="{{ url_for('referee_game', id = game.id) }}">{{ game.round }}</a></td>
-					<td><a href="{{ url_for('referee_game', id = game.id) }}">{{ game.field }}</a></td>
-					<td><a href="{{ url_for('referee_game', id = game.id) }}">{{ game.time() }}</a></td>
-					<td><a href="{{ url_for('referee_game', id = game.id) }}">{{ game.home_team.name }}</a></td>
-					<td><a href="{{ url_for('referee_game', id = game.id) }}">{{ game.away_team.name }}</a></td>
+					<td><a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}">{{ game.league.name }}</a></td>
+					<td><a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}">{{ game.round }}</a></td>
+					<td><a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}">{{ game.field }}</a></td>
+					<td><a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}">{{ game.time() }}</a></td>
+					<td><a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}">{{ game.home_team.name }}</a></td>
+					<td><a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}">{{ game.away_team.name }}</a></td>
 				</tr>
 			{% endfor %}
 			</tbody>

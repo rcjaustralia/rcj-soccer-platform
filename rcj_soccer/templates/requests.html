@@ -25,10 +25,10 @@
     var update_frequency = 2000;
     var previous_count = 100;
     function get_requests() {
-        $.getJSON("{{ url_for('get_requests') }}", function(data) {
+        $.getJSON("{{ url_for('get_requests', competition = comp.id) }}", function(data) {
             var count = 0;
             if (data["error"]) {
-                window.location.href = "{{ url_for('login') }}";
+                window.location.href = "{{ url_for('login', competition = comp.id) }}";
             }
 
             $(".cards .col").remove();
@@ -41,7 +41,7 @@
                 var card = $(".template").clone().removeClass("template");
                 for (field in data[row]) {
                     if (field == "received") {
-                        data[row][field] = moment(data[row][field]).fromNow();
+                        data[row][field] = moment(data[row][field] + "+00:00").fromNow();
                     }
                     card.find("." + field).text(data[row][field]);
                 }

@@ -18,7 +18,9 @@ def result_game(competition, id):
 @app.route("/<competition>/results/<id>/state", methods=["GET"])
 def update_result_game_state(competition, id):
     comp = get_competition(competition)
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     return json.dumps({
         "home_goals": game.home_goals,
         "away_goals": game.away_goals,
@@ -33,6 +35,8 @@ def update_result_game_state(competition, id):
 
 
 def result_show_game(comp, id):
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     return render_template("liveresults.html", game=game,
                            auth=template(comp.id), comp=comp)

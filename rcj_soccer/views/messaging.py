@@ -23,7 +23,10 @@ def messaging(competition):
 
 def show_form(comp):
     users = User.query.filter_by(
-        competition_id=comp.id).order_by(User.username.asc()).all()
+        competition_id=comp.id
+    ).order_by(
+        User.username.asc()
+    ).all()
     balance = sms.balance()
     return render_template("messaging.html", users=users, comp=comp,
                            auth=template(comp.id), balance=balance)

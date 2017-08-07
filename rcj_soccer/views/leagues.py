@@ -49,16 +49,18 @@ def create_new_league(comp):
 
 
 def show_league(comp, id):
-    league = League.query.filter_by(id=int(id)).one()
+    league = League.query.filter_by(id=int(id), competition_id=comp.id).one()
     return render_template("league.html", league=league,
                            auth=template(comp.id), comp=comp)
 
 
 def edit_league(comp, id):
     if request.form["action"] == "delete":
-        League.query.filter_by(id=int(id)).delete()
+        League.query.filter_by(id=int(id), competition_id=comp.id).delete()
     else:
-        league = League.query.filter_by(id=int(id)).one()
+        league = League.query.filter_by(
+            id=int(id), competition_id=comp.id
+        ).one()
         league.name = request.form["name"]
         league.areas = int(request.form["fields"])
         league.duration = int(request.form["duration"])

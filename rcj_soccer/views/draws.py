@@ -78,13 +78,16 @@ def show_draw(comp):
     finals_size = int(request.form["finals_size"])
     total_repeats = int(request.form["total_repeats"])
 
-    fields = League.query.filter_by(id=league_id).one().areas
+    league = League.query.filter_by(id=league_id, competition_id=comp.id).one()
+    fields = league.areas
 
     team_count = Team.query.filter_by(
-        league_id=league_id).filter_by(is_system=False).count()
+        league_id=league_id, is_system=False
+    ).count()
     # print team_count
     real_teams = Team.query.filter_by(
-        league_id=league_id).filter_by(is_system=False).all()
+        league_id=league_id, is_system=False
+    ).all()
     has_blank = (team_count % 2 == 1)
     teams = list(range(team_count + int(has_blank)))  # emulate Python 2 range
     random.shuffle(teams)
@@ -95,7 +98,8 @@ def show_draw(comp):
     current_time = start_time
 
     bye_team = Team.query.filter_by(
-        is_bye=True).filter_by(league_id=league_id).first()
+        is_bye=True, league_id=league_id
+    ).first()
     # print "Bye Team", bye_team
     if bye_team is None:
         bye_team = Team()
@@ -155,9 +159,11 @@ def show_draw(comp):
             logger.error("{0}: Top {1} vs Top {2}".format(
                 round_count + 1, i + 1, finals_games * 2 - i)
             )
-            home_team = Team.query.filter_by(is_system=True).filter_by(
-                school="finals:top:" + str(i + 1)).filter_by(
-                league_id=league_id).first()
+            home_team = Team.query.filter_by(
+                is_system=True,
+                school="finals:top:" + str(i + 1),
+                league_id=league_id
+            ).first()
             if home_team is None:
                 home_team = Team()
                 home_team.league_id = league_id
@@ -168,9 +174,11 @@ def show_draw(comp):
                 db.session.commit()
             finals_teams.append(home_team)
 
-            away_team = Team.query.filter_by(is_system=True).filter_by(
-                school="finals:top:" + str(finals_games * 2 - i)).filter_by(
-                league_id=league_id).first()
+            away_team = Team.query.filter_by(
+                is_system=True,
+                school="finals:top:" + str(finals_games * 2 - i),
+                league_id=league_id
+            ).first()
             if away_team is None:
                 away_team = Team()
                 away_team.league_id = league_id

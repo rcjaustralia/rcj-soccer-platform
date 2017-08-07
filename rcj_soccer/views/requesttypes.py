@@ -54,10 +54,13 @@ def create_new_type(comp):
 
 def show_type(comp, id):
     rtype = RequestType.query.filter_by(
-        id=int(id), competition_id=comp.id).one()
+        id=int(id), competition_id=comp.id
+    ).one()
     users = User.query.filter_by(
-        is_active=True, competition_id=comp.id).order_by(
-        User.username.asc()).all()
+        is_active=True, competition_id=comp.id
+    ).order_by(
+        User.username.asc()
+    ).all()
     return render_template("type.html", rtype=rtype, comp=comp,
                            auth=template(comp.id), users=users)
 
@@ -65,10 +68,12 @@ def show_type(comp, id):
 def edit_type(comp, id):
     if request.form["action"] == "delete":
         RequestType.query.filter_by(
-            id=int(id), competition_id=comp.id).delete()
+            id=int(id), competition_id=comp.id
+        ).delete()
     else:
         rtype = RequestType.query.filter_by(
-            id=int(id), competition_id=comp.id).one()
+            id=int(id), competition_id=comp.id
+        ).one()
         rtype.name = request.form["name"]
         rtype.only_admin = request.form.get("only_admin", False) == "true"
         rtype.priority = int(request.form["priority"])

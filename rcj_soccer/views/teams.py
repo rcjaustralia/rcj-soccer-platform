@@ -44,9 +44,13 @@ def show_all_teams(comp):
 
 
 def create_new_team(comp):
+    league = League.query.filter_by(
+        id=int(request.form["league"]),
+        competition_id=comp.id
+    ).one()
     team = Team()
     team.name = request.form["name"]
-    team.league_id = int(request.form["league"])
+    team.league_id = league.id
     team.school = request.form["school"]
     db.session.add(team)
     db.session.commit()
@@ -56,10 +60,14 @@ def create_new_team(comp):
 def create_many_teams(comp):
     data = request.form["csv-data"].strip().split("\n")
     data = map(lambda s: s.split(","), data)
+    league = League.query.filter_by(
+        id=int(request.form["league"]),
+        competition_id=comp.id
+    ).one()
     for row in data:
         team = Team()
         team.name = row[0].strip()
-        team.league_id = int(request.form["league"])
+        team.league_id = league.id
         team.school = row[1].strip()
         db.session.add(team)
         db.session.commit()
@@ -67,7 +75,9 @@ def create_many_teams(comp):
 
 
 def show_team(comp, id):
-    team = Team.query.filter_by(id=int(id)).one()
+    team = Team.query.filter_by(id=int(id)).filter(
+        Team.league.has(competition_id=comp.id)
+    ).one()
     leagues = League.query.filter_by(competition_id=comp.id).all()
     return render_template("team.html", team=team, comp=comp,
                            leagues=leagues, auth=template(comp.id))
@@ -75,12 +85,20 @@ def show_team(comp, id):
 
 def edit_team(comp, id):
     if request.form["action"] == "delete":
-        Team.query.filter_by(id=int(id)).delete()
+        Team.query.filter_by(id=int(id)).filter(
+            Team.league.has(competition_id=comp.id)
+        ).delete()
     else:
-        team = Team.query.filter_by(id=int(id)).one()
+        team = Team.query.filter_by(id=int(id)).filter(
+            Team.league.has(competition_id=comp.id)
+        ).one()
+        league = League.query.filter_by(
+            id=int(request.form["league"]),
+            competition_id=comp.id
+        ).one()
         team.name = request.form["name"]
         team.school = request.form["school"]
-        team.league_id = int(request.form["league"])
+        team.league_id = league.id
         team.scrutineer_1 = (request.form.get("scrutineer_1", False) == "true")
         team.scrutineer_2 = (request.form.get("scrutineer_2", False) == "true")
     db.session.commit()

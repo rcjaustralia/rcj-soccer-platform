@@ -71,13 +71,17 @@ def show_all_teams(comp):
 
 
 def show_team(comp, id):
-    team = Team.query.filter_by(id=int(id)).one()
+    team = Team.query.filter_by(id=int(id)).filter(
+        Team.league.has(competition_id=comp.id)
+    ).one()
     return render_template("scrutineer.html", team=team,
                            auth=template(comp.id), comp=comp)
 
 
 def save_team(comp, id):
-    team = Team.query.filter_by(id=int(id)).one()
+    team = Team.query.filter_by(id=int(id)).filter(
+        Team.league.has(competition_id=comp.id)
+    ).one()
     team.scrutineer_1 = (request.form.get("scrutineer_1", False) == "true")
     team.scrutineer_2 = (request.form.get("scrutineer_2", False) == "true")
     db.session.commit()

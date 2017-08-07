@@ -43,11 +43,15 @@ def referee_game_end(competition, id):
     if not check_user(comp.id):
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
-        game = SoccerGame.query.filter_by(id=id).one()
+        game = SoccerGame.query.filter_by(id=id).filter(
+            SoccerGame.league.has(competition_id=comp.id)
+        ).one()
         return render_template("referee_end.html", auth=template(comp.id),
                                game=game, comp=comp)
     else:
-        game = SoccerGame.query.filter_by(id=id).one()
+        game = SoccerGame.query.filter_by(id=id).filter(
+            SoccerGame.league.has(competition_id=comp.id)
+        ).one()
         game.winner_agrees = (request.form.get(
             "winner_agrees", False) == "true")
         game.loser_agrees = (request.form.get("loser_agrees", False) == "true")
@@ -63,7 +67,9 @@ def update_game_state(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     return json.dumps({
         "home_goals": game.home_goals,
         "away_goals": game.away_goals,
@@ -87,7 +93,9 @@ def update_game_clock(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     if game.timer_start is None:
         game.timer_start = datetime.now()
     else:
@@ -102,7 +110,9 @@ def next_game_state(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     if not game.first_half_finished:
         game.first_half_finished = True
     elif not game.half_time_finished:
@@ -124,7 +134,9 @@ def prev_game_state(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     if game.second_half_finished:
         game.second_half_finished = False
     elif game.half_time_finished:
@@ -146,7 +158,9 @@ def score_home_goal(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     game.home_goals += 1
     game.home_damaged_1 = None
     game.home_damaged_2 = None
@@ -162,7 +176,9 @@ def score_away_goal(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     game.away_goals += 1
     game.home_damaged_1 = None
     game.home_damaged_2 = None
@@ -178,7 +194,9 @@ def score_home_goal_cancel(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     if game.home_goals > 0:
         game.home_goals -= 1
     db.session.commit()
@@ -191,7 +209,9 @@ def score_away_goal_cancel(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     if game.away_goals > 0:
         game.away_goals -= 1
     db.session.commit()
@@ -204,7 +224,9 @@ def damage_home_1(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     if game.home_damaged_1 is None:
         game.home_damaged_1 = datetime.now()
     else:
@@ -219,7 +241,9 @@ def damage_home_2(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     if game.home_damaged_2 is None:
         game.home_damaged_2 = datetime.now()
     else:
@@ -234,7 +258,9 @@ def damage_away_1(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     if game.away_damaged_1 is None:
         game.away_damaged_1 = datetime.now()
     else:
@@ -249,7 +275,9 @@ def damage_away_2(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     if game.away_damaged_2 is None:
         game.away_damaged_2 = datetime.now()
     else:
@@ -264,7 +292,9 @@ def reset_game(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    game = SoccerGame.query.filter_by(id=id).one()
+    game = SoccerGame.query.filter_by(id=id).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     game.timer_start = None
     game.home_damaged_1 = None
     game.home_damaged_2 = None
@@ -292,6 +322,10 @@ def send_request(competition, id, rtype):
 
     db.session.add(req)
     db.session.commit()
+    if req.request_type.competition_id != comp.id:
+        Request.query.filter_by(id=req.id).delete()
+        return json.dumps({"error": "login_fail"})
+
     if req.request_type.send_text:
         sms.send(req.request_type.user.phone,
                  "REQUEST: {type} at {league} {field} by {user} ({time})"

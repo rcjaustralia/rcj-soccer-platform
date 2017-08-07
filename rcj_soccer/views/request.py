@@ -23,11 +23,12 @@ def get_requests(competition):
     if not user:
         return json.dumps({"error": "login_fail"})
 
-    all = Request.query.filter_by(actioned=False).join(Request.request_type)\
-        .filter(RequestType.competition_id == comp.id).order_by(
-            RequestType.priority.desc(),
-            Request.received.asc(),
-            Request.id.asc()
+    all = Request.query.filter_by(actioned=False).filter(
+        Request.request_type.has(competition_id=comp.id)
+    ).order_by(
+        RequestType.priority.desc(),
+        Request.received.asc(),
+        Request.id.asc()
     ).all()
 
     if not user.is_admin:
@@ -44,7 +45,9 @@ def resolve_request(competition, id):
     if not check_user(comp.id):
         return json.dumps({"error": "login_fail"})
 
-    req = Request.query.filter_by(id=int(id)).one()
+    req = Request.query.filter_by(id=int(id)).filter(
+        Request.request_type.has(competition_id=comp.id)
+    ).one()
     req.actioned = True
     db.session.commit()
     return jsonify({"success": "resolve_request"})

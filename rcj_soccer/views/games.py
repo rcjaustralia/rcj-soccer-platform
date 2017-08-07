@@ -67,8 +67,12 @@ def show_all_games(comp):
 
 
 def create_new_game(comp):
+    league = League.query.filter_by(
+        id=int(request.form["league"]),
+        competition_id=comp.id
+    ).one()
     game = SoccerGame()
-    game.league_id = int(request.form["league"])
+    game.league_id = league.id
     game.home_team_id = int(request.form["home_team"])
     game.away_team_id = int(request.form["away_team"])
     game.field = int(request.form["field"])
@@ -80,7 +84,11 @@ def create_new_game(comp):
 
 
 def show_game(comp, id):
-    game = SoccerGame.query.filter_by(id=int(id)).one()
+    game = SoccerGame.query.filter_by(
+        id=int(id)
+    ).filter(
+        SoccerGame.league.has(competition_id=comp.id)
+    ).one()
     leagues = League.query.filter_by(competition_id=comp.id).all()
     teams = Team.query.filter(
         Team.league.has(competition_id=comp.id)
@@ -91,9 +99,13 @@ def show_game(comp, id):
 
 def edit_game(comp, id):
     if request.form["action"] == "delete":
-        SoccerGame.query.filter_by(id=int(id)).delete()
+        SoccerGame.query.filter_by(id=int(id)).filter(
+            SoccerGame.league.has(competition_id=comp.id)
+        ).delete()
     else:
-        game = SoccerGame.query.filter_by(id=int(id)).one()
+        game = SoccerGame.query.filter_by(id=int(id)).filter(
+            SoccerGame.league.has(competition_id=comp.id)
+        ).one()
         game.league_id = int(request.form["league"])
         game.home_team_id = int(request.form["home_team"])
         game.away_team_id = int(request.form["away_team"])
@@ -118,7 +130,7 @@ def calculate_system_teams(comp):
     ).all()
     games = filter(lambda g: g.is_system_game(), games)
     for game in games:
-        logger.error(game.id, game.can_populate())
+        logger.error("{0} {1}".format(game.id, game.can_populate()))
         if not game.can_populate():
             continue
 
@@ -131,7 +143,7 @@ def calculate_system_teams(comp):
             league_id=game.league_id
         ).all()
         teams.sort(cmp=lambda a, b: b.compare(a, finals_only))
-        logger.error("Only consider finals:", finals_only)
+        logger.error("Only consider finals: {0}".format(finals_only))
         home_index = int(game.home_team.school.replace("finals:top:", "")) - 1
         away_index = int(game.away_team.school.replace("finals:top:", "")) - 1
         game.home_team_id = teams[home_index].id

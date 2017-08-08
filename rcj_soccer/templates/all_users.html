@@ -29,7 +29,7 @@
 		<form class="col s12" action="{{ url_for('users', competition = comp.id) }}" method="post">
 			<div class="row">
 				<div class="input-field col s4">
-					<input id="username" type="text" class="validate" minlength="3" name="username" pattern="[a-z]+">
+					<input id="username" type="text" class="validate" minlength="3" name="username" pattern="[a-z0-9]+">
 					<label for="username">Username</label>
 				</div>
 				<div class="input-field col s4">

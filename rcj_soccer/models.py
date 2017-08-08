@@ -20,7 +20,7 @@ class User(db.Model):
     competition_id = db.Column(db.String(64), db.ForeignKey("competition.id"))
     competition = db.relationship("Competition", uselist=False)
     username = db.Column(db.String(64), primary_key=True)
-    phone = db.Column(db.String(12), unique=True)
+    phone = db.Column(db.String(12))
     session_token = db.Column(db.String(255), unique=True)
     session_expires = db.Column(db.DateTime)
     auth_token = db.Column(db.Integer)

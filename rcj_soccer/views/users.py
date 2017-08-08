@@ -62,8 +62,19 @@ def show_user(comp, username):
         username=username,
         competition_id=comp.id
     ).one()
+
+    can_delete = True
+    count = User.query.filter_by(
+        competition_id=comp.id,
+        is_admin=True,
+        is_active=True
+    ).count()
+
+    if count <= 1:
+        can_delete = False
+
     return render_template("user.html", user=user, auth=template(comp.id),
-                           comp=comp)
+                           comp=comp, can_delete=can_delete)
 
 
 def edit_user(comp, username):

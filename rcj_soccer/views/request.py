@@ -25,7 +25,7 @@ def get_requests(competition):
 
     all = Request.query.filter_by(actioned=False).filter(
         Request.request_type.has(competition_id=comp.id)
-    ).order_by(
+    ).join(RequestType).order_by(
         RequestType.priority.desc(),
         Request.received.asc(),
         Request.id.asc()

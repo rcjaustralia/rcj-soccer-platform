@@ -14,6 +14,6 @@ def list_competitions():
 
 
 def get_competition(id):
-    competition = Competition.query.filter_by(id=id).first()
+    competition = Competition.query.filter_by(id=id, is_active=True).first()
 
     return competition

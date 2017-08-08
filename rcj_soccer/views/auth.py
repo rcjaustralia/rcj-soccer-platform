@@ -117,5 +117,6 @@ def template(comp_id, fixed=False):
     return {
         "is_logged_in": check_user(comp_id),
         "is_admin": check_user(comp_id, True),
-        "fixed_navbar": fixed
+        "fixed_navbar": fixed,
+        "year": datetime.utcnow().year
     }

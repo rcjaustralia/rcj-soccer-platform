@@ -27,13 +27,13 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="input-field col s12">
+				<div class="col s12">
 					<input id="winner_agrees" type="checkbox" name="winner_agrees" value="true" {% if game.winner_agrees %}checked{% endif %}>
 					<label for="winner_agrees">{% if game.home_goals >= game.away_goals %}{{ game.home_team.name }}{% else %}{{ game.away_team.name }}{% endif %} Agrees</label>
 				</div>
 			</div>
 			<div class="row">
-				<div class="input-field col s12">
+				<div class="col s12">
 					<input id="loser_agrees" type="checkbox" name="loser_agrees" value="true" {% if game.loser_agrees %}checked{% endif %}>
 					<label for="loser_agrees">{% if game.home_goals < game.away_goals %}{{ game.home_team.name }}{% else %}{{ game.away_team.name }}{% endif %} Agrees</label>
 				</div>

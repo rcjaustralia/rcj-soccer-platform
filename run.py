@@ -9,17 +9,23 @@ if __name__ == "__main__":
     port = 5000
 
     server_fn = type(application).run
+    arguments = {
+        "host": host,
+        "port": port
+    }
     logger.info("Starting app...")
     try:
         import waitress
         server_fn = waitress.serve
         logger.info("Using waitress")
+        arguments["threads"] = 8
     except ImportError:
         pass
     try:
         import sanic
         server_fn = sanic.Sanic.run
         logger.info("Using sanic")
+        arguments["workers"] = 8
     except ImportError:
         pass
     try:
@@ -28,6 +34,6 @@ if __name__ == "__main__":
         logger.info("Using bjoern")
     except ImportError:
         pass
-    server_fn(application, host=host, port=port)
+    server_fn(application, **arguments)
 
 logger.warn("Running run.py with name: ", __name__)

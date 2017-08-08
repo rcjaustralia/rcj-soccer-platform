@@ -21,7 +21,7 @@
 	</head>
 	<body>
 		<div class="{% if auth.fixed_navbar %}navbar-fixed{% endif %}">
-			<nav>
+			<nav class="blue darken-4">
 				<a href="#" data-activates="collapsed-nav" class="button-collapse"><i class="material-icons">menu</i></a>
 				<ul class="left hide-on-med-and-down">
 					<li><a href="/">Home</a></li>
@@ -91,19 +91,19 @@
 						<h4 class="black-text">Sponsors</h4>
 						<div class="row">
 							<div class="col s12 m4">
-								<h5 class="truncate">Platinum National</h5>
+								<h5 class="truncate black-text">Platinum National</h5>
 								<a href="https://www.teaching.com.au/">
 									<img alt="Modern Teaching Aids" src="/static/images/sponsors/mta.png">
 								</a>
 							</div>
 							<div class="col s12 m4">
-								<h5>National</h5>
+								<h5 class="black-text">National</h5>
 								<a href="http://www.araa.asn.au">
 									<img alt="Australian Robotics and Automation Association" src="/static/images/sponsors/araa.png">
 								</a>
 							</div>
 							<div class="col s12 m4">
-								<h5>Event</h5>
+								<h5 class="black-text">Event</h5>
 								<a href="{{ comp.event_sponsor_link }}">
 									<img alt="Competition Event Sponsor" src="{{ comp.event_sponsor_img }}">
 								</a>
@@ -119,9 +119,9 @@
 					</div>
 				</div>
 			</div>
-			<div class="footer-copyright red lighten-1">
+			<div class="footer-copyright blue darken-4">
 				<div class="container">
-					&copy; 2017 <a href="http://www.robocupjunior.org.au/" class="grey-text text-lighten-4">RoboCupJunior Australia</a><span class="hide-on-med-and-down"> &bull; This site uses cookies for authentication and to improve performance.</span>
+					&copy; {{ auth.year }} <a href="http://www.robocupjunior.org.au/" class="grey-text text-lighten-4">RoboCupJunior Australia</a><span class="hide-on-med-and-down"> &bull; This site uses cookies for authentication and to improve performance.</span>
 				</div>
 			</div>
 		</footer>

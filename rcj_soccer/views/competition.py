@@ -1,6 +1,7 @@
 from rcj_soccer.base import app
 from rcj_soccer.models import Competition
 from flask import render_template
+from datetime import datetime
 
 import logging
 logger = logging.getLogger(__name__)
@@ -10,7 +11,8 @@ logger = logging.getLogger(__name__)
 def list_competitions():
     competitions = Competition.query.filter_by(is_active=True)\
         .order_by(Competition.name).all()
-    return render_template("competitions.html", competitions=competitions)
+    return render_template("competitions.html", competitions=competitions,
+                           year=datetime.utcnow().year)
 
 
 def get_competition(id):

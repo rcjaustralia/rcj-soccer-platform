@@ -23,17 +23,17 @@
 	<div class="row">
 		<div class="col s6">
 			{% if switch_side %}
-				<h4 class="truncate valid-{{ game.home_team.valid_robots() }}">{{ game.home_team.name }}</h4>
+				<h4 class="truncate valid-{{ game.home_team.valid_robots() }}" id="home-team-name">{{ game.home_team.name }}</h4>
 			{% else %}
-				<h4 class="truncate valid-{{ game.away_team.valid_robots() }}">{{ game.away_team.name }}</h4>
+				<h4 class="truncate valid-{{ game.away_team.valid_robots() }}" id="away-team-name">{{ game.away_team.name }}</h4>
 			{% endif %}
 		</h4>
 		</div>
 		<div class="col s6">
 			{% if switch_side %}
-				<h4 class="truncate valid-{{ game.away_team.valid_robots() }}">{{ game.away_team.name }}</h4>
+				<h4 class="truncate valid-{{ game.away_team.valid_robots() }}" id="away-team-name">{{ game.away_team.name }}</h4>
 			{% else %}
-				<h4 class="truncate valid-{{ game.home_team.valid_robots() }}">{{ game.home_team.name }}</h4>
+				<h4 class="truncate valid-{{ game.home_team.valid_robots() }}" id="home-team-name">{{ game.home_team.name }}</h4>
 			{% endif %}
 		</div>
 	</div>
@@ -79,41 +79,50 @@
 	</div>
 	<div class="row">
 		<div class="col s6">
-			<a href="{{ url_for('referee_game_end', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Finish Game</a>
-		</div>
-		<div class="col s6">
-			{% if switch_side %}
-			<a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
-			{% else %}
-			<a href="{{ url_for('referee_game_2', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
-			{% endif %}
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s6">
 			<button class="btn waves-effect waves-light btn-large" type="button" id="{% if switch_side %}home{% else %}away{% endif %}-cancel-goal">Ungoal</button>
 		</div>
 		<div class="col s6">
 			<button class="btn waves-effect waves-light btn-large" type="button" id="{% if switch_side %}away{% else %}home{% endif %}-cancel-goal">Ungoal</button>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col s6">
-			<button class="btn waves-effect waves-light btn-large" type="button" id="flip-colours">Flip Colors</button>
+	<div class="divider"></div>
+	<div class="section">
+		<div class="row">
+			<div class="col s6">
+				<button class="btn waves-effect waves-light btn-large" type="button" id="flip-colours">Flip&nbsp;Colors</button>
+			</div>
+			<div class="col s6">
+				{% if switch_side %}
+				<a href="{{ url_for('referee_game', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
+				{% else %}
+				<a href="{{ url_for('referee_game_2', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Flip Sides</a>
+				{% endif %}
+			</div>
 		</div>
-		<div class="col s6">
-			<a class='dropdown-button btn btn-large' href='#' data-activates='request-menu'>Request</a>
-
-			<ul id='request-menu' class='dropdown-content'>
-				{% for rtype in request_types %}
-				<li><a class="request" data-request-type="{{ rtype.id }}" href="#">{{ rtype.name }}</a></li>
-				{% endfor %}
-			</ul>
+		<div class="row">
+			<div class="col s6">
+				<button class="btn waves-effect waves-light btn-large red" type="button" id="reset-game">Reset&nbsp;Game</button>
+			</div>
+			<div class="col s6">
+				<a href="{{ url_for('referee_game_end', competition = comp.id, id = game.id) }}" class="btn waves-effect waves-light btn-large">Finish&nbsp;Game</a>
+			</div>
 		</div>
 	</div>
-	<div class="row reset-game">
-		<div class="col s12">
-			<button class="btn waves-effect waves-light btn-large red hide" type="button" id="reset-game">Reset Game</button>
+	<div class="divider"></div>
+	<div class="section">
+		<div class="row">
+			<div class="col s6">
+				<a class='dropdown-button btn btn-large' href='#' data-activates='request-menu'>Request</a>
+
+				<ul id='request-menu' class='dropdown-content'>
+					{% for rtype in request_types %}
+					<li><a class="request" data-request-type="{{ rtype.id }}" href="#">{{ rtype.name }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="col s6">
+				<button class="btn waves-effect waves-light btn-large" type="button" id="coin-toss">Coin Toss</button>
+			</div>
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -191,12 +200,9 @@
 				away_damaged_2 = data["away_damaged_2"];
 
 				if (el_game_state.textContent == "UK") {
-					$(".btn").hide();
-					$(".reset-game .btn").show();
 					game_hidden = true;
 				} else if (game_hidden) {
 					$(".btn").show();
-					$('.reset-game .btn').hide();
 					game_hidden = false;
 				}
 
@@ -315,9 +321,18 @@
 			set_event("#away-1-damage", "{{ url_for('damage_away_1', competition = comp.id, id = game.id) }}");
 			set_event("#away-2-damage", "{{ url_for('damage_away_2', competition = comp.id, id = game.id) }}");
 			set_event("#timer-toggle", "{{ url_for('update_game_clock', competition = comp.id, id = game.id) }}");
+			set_event("#reset-game", "{{ url_for('reset_game', competition = comp.id, id = game.id) }}");
 
 			$("#flip-colours").click(function() {
 				flip_colors();
+			});
+
+			$("#coin-toss").click(function() {
+				var msg = "HEADS: " + $("#home-team-name").text() + "\n";
+				msg += "TAILS: " + $("#away-team-name").text() + "\n\n";
+				msg += "COIN is " + (Math.random() <= 0.5 ? "HEADS" : "TAILS") + "!";
+
+				alert(msg);
 			});
 
 			$(".request").click(function(e) {
@@ -348,19 +363,19 @@
 		});
 	</script>
 	<style type="text/css">
-	h3, h2, h4 {
-		margin: 0;
-		padding: 0;
-	}
-	.highlight-timer {
-		background-color: red;
-		color: white;
-	}
-	.valid-0 {
-		background-color: red;
-	}
-	.valid-1 {
-		background-color: orange;
-	}
+		h3, h2, h4 {
+			margin: 0;
+			padding: 0;
+		}
+		.highlight-timer {
+			background-color: red;
+			color: white;
+		}
+		.valid-0 {
+			background-color: red;
+		}
+		.valid-1 {
+			background-color: orange;
+		}
 	</style>
 {% endblock %}

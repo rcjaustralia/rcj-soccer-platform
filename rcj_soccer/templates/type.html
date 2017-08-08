@@ -15,13 +15,13 @@
 					<input id="priority" type="number" class="validate" min="0" max="100" name="priority" value="{{ rtype.priority }}">
 					<label for="priority">Priority</label>
 				</div>
-				<div class="input-field col s4">
+				<div class="col s4">
 					<input id="only_admin" type="checkbox" name="only_admin" value="true"{% if rtype.only_admin %} checked{% endif %}>
 					<label for="only_admin">Admin Only</label>
 				</div>
 			</div>
 			<div class="row">
-				<div class="input-field col s4">
+				<div class="col s4">
 					<input id="send_text" type="checkbox" name="send_text" value="true"{% if rtype.send_text %} checked{% endif %}>
 					<label for="send_text">Send Text</label>
 				</div>

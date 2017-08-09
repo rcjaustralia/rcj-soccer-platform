@@ -13,6 +13,8 @@ cd /srv/
 if [ ! -z "$RCJ_DATABASE_MIGRATE" ]; then
     if [ ! -z "$RCJ_DATABASE_INIT" ]; then
         python3.6 -m rcj_soccer db init
+    elif [ ! "$(ls -A /srv/migration_data)" ]; then
+        python3.6 -m rcj_soccer db init
     else
         mkdir -p /srv/migrations
         cp -R /srv/migration_data/* /srv/migrations/
@@ -23,6 +25,6 @@ if [ ! -z "$RCJ_DATABASE_MIGRATE" ]; then
     rm -rf /srv/migration_data/*
     cp -R /srv/migrations/* /srv/migration_data/
 fi
-ls .
+
 echo "now calling run..."
 python3.6 run.py

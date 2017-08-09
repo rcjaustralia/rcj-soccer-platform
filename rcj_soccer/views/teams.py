@@ -85,9 +85,12 @@ def show_team(comp, id):
 
 def edit_team(comp, id):
     if request.form["action"] == "delete":
-        Team.query.filter_by(id=int(id)).filter(
+        team = Team.query.filter(
+            (Team.id == int(id)) &
             Team.league.has(competition_id=comp.id)
-        ).delete()
+        ).one()
+        db.session.delete(team)  # No sure why delete() query fails
+        db.session.commit()      # but this method works
     else:
         team = Team.query.filter_by(id=int(id)).filter(
             Team.league.has(competition_id=comp.id)

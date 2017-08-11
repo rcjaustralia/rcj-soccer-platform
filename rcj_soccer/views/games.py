@@ -27,8 +27,13 @@ def games_delete_all(competition):
     if not check_user(comp.id, True):
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
-        db.session.query(SoccerGame).filter(SoccerGame.game_finished == False)\
-            .filter(SoccerGame.league.has(competition_id=comp.id)).delete()
+        games = db.session.query(SoccerGame).filter(
+            SoccerGame.game_finished == False
+        ).filter(
+            SoccerGame.league.has(competition_id=comp.id)
+        ).all()
+        for game in games:
+            db.session.delete(game)
         db.session.commit()
         return redirect(url_for("games", competition=comp.id))
 
@@ -142,7 +147,10 @@ def calculate_system_teams(comp):
         teams = Team.query.filter_by(is_system=False).filter_by(
             league_id=game.league_id
         ).all()
-        teams.sort(cmp=lambda a, b: b.compare(a, finals_only))
+        teams.sort(key=lambda team: (
+            -1 * team.score(), -1 * team.goal_difference(),
+            -1 * team.goals_for(), -1 * team.games_played(), team.name
+        ))
         logger.error("Only consider finals: {0}".format(finals_only))
         home_index = int(game.home_team.school.replace("finals:top:", "")) - 1
         away_index = int(game.away_team.school.replace("finals:top:", "")) - 1

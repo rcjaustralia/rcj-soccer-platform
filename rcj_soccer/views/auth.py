@@ -73,7 +73,7 @@ def show_username_form(comp):
 
 
 def send_sms(phone, token):
-    logger.info("SENDING SMS: {}", token)
+    logger.info("SENDING SMS TOKEN: {0}".format(token))
     sms.send(
         phone,
         "Your security code for logging into RoboCup Junior is: " + str(token))

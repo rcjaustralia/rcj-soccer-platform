@@ -54,3 +54,7 @@ ins {
     text-decoration: none;
     color: red;
 }
+
+.tabs .indicator {
+    background-color: #0D47A1;
+}

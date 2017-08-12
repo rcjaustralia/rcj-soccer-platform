@@ -324,7 +324,9 @@ def send_request(competition, id, rtype):
 
     db.session.add(req)
     db.session.commit()
-    if req.request_type.competition_id != comp.id:
+    if req.request_type is None \
+            or req.request_type.competition_id != comp.id \
+            or not req.request_type.is_active:
         Request.query.filter_by(id=req.id).delete()
         return json.dumps({"error": "login_fail"})
 
@@ -344,7 +346,8 @@ def send_request(competition, id, rtype):
 def show_game(comp, id, switch):
     game = SoccerGame.query.filter_by(id=id).one()
     request_types = RequestType.query.filter_by(
-        competition_id=comp.id
+        competition_id=comp.id,
+        is_active=True
     ).order_by(
         RequestType.priority.desc(), RequestType.name.asc()
     ).all()

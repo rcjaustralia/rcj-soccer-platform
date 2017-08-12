@@ -29,7 +29,9 @@ def request_type(competition, id):
 
 
 def show_all_types(comp):
-    types = RequestType.query.filter_by(competition_id=comp.id).all()
+    types = RequestType.query.filter_by(
+        competition_id=comp.id, is_active=True
+    ).all()
     users = User.query.filter_by(is_active=True, competition_id=comp.id)\
         .order_by(User.username.asc()).all()
     return render_template("all_types.html", types=types, comp=comp,
@@ -43,6 +45,7 @@ def create_new_type(comp):
     rtype.only_admin = request.form.get("only_admin", False) == "true"
     rtype.send_text = request.form.get("send_text", False) == "true"
     rtype.competition_id = comp.id
+    rtype.is_active = True
     if len(request.form["user_id"]) == 0:
         rtype.user_id = None
     else:
@@ -54,7 +57,7 @@ def create_new_type(comp):
 
 def show_type(comp, id):
     rtype = RequestType.query.filter_by(
-        id=int(id), competition_id=comp.id
+        id=int(id), competition_id=comp.id, is_active=True
     ).one()
     users = User.query.filter_by(
         is_active=True, competition_id=comp.id
@@ -67,12 +70,15 @@ def show_type(comp, id):
 
 def edit_type(comp, id):
     if request.form["action"] == "delete":
-        RequestType.query.filter_by(
-            id=int(id), competition_id=comp.id
-        ).delete()
+        rtype = RequestType.query.filter_by(
+            id=int(id), competition_id=comp.id, is_active=True
+        ).one()
+
+        rtype.is_active = False
+        db.session.commit()
     else:
         rtype = RequestType.query.filter_by(
-            id=int(id), competition_id=comp.id
+            id=int(id), competition_id=comp.id, is_active=True
         ).one()
         rtype.name = request.form["name"]
         rtype.only_admin = request.form.get("only_admin", False) == "true"

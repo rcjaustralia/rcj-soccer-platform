@@ -217,6 +217,7 @@ class RequestType(db.Model):
     send_text = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.String(64), db.ForeignKey("user.username"))
     user = db.relationship("User", uselist=False, backref="user")
+    is_active = db.Column(db.Boolean, default=True)
 
 
 class Request(db.Model):

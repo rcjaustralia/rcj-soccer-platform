@@ -25,6 +25,8 @@ def get_requests(competition):
 
     all = Request.query.filter_by(actioned=False).filter(
         Request.request_type.has(competition_id=comp.id)
+    ).filter(
+        Request.request_type.has(is_active=True)
     ).join(RequestType).order_by(
         RequestType.priority.desc(),
         Request.received.asc(),
@@ -47,6 +49,8 @@ def resolve_request(competition, id):
 
     req = Request.query.filter_by(id=int(id)).filter(
         Request.request_type.has(competition_id=comp.id)
+    ).filter(
+        Request.request_type.has(is_active=True)
     ).one()
     req.actioned = True
     db.session.commit()

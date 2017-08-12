@@ -57,6 +57,8 @@ def referee_game_end(competition, id):
         game.loser_agrees = (request.form.get("loser_agrees", False) == "true")
         game.game_finished = True
         game.ref_id = check_user(comp.id).username
+        game.home_goals = int(request.form.get("home_goals", game.home_goals))
+        game.away_goals = int(request.form.get("away_goals", game.away_goals))
         db.session.commit()
         return redirect(url_for("referee", competition=comp.id))
 

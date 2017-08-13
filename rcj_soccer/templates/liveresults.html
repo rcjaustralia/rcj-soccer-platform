@@ -88,7 +88,7 @@
 			if (start == "None") {
 				diff = goal * 60000;
 			} else {
-				diff = Math.max(0, goal * 60000 - (new Date()).getTime() + (new Date(start + "+10:00")).getTime());
+				diff = Math.max(0, goal * 60000 - (new Date()).getTime() + (new Date(start + "+00:00")).getTime());
 			}
 			var mins = Math.min(59, Math.floor(diff / 60000)) + "";
 			var secs = Math.round(((diff % 60000) / 1000)) + "";

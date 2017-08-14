@@ -23,17 +23,17 @@
 	<div class="row">
 		<div class="col s6">
 			{% if switch_side %}
-				<h4 class="truncate valid-{{ game.home_team.valid_robots() }}" id="home-team-name">{{ game.home_team.name }}</h4>
+				<h4 class="truncate valid-{{ game.home_team.valid_robots() }} valid-robots" id="home-team-name" data-valid-robots="{{ game.home_team.valid_robots() }}" data-school="{{ game.home_team.school }}">{{ game.home_team.name }}</h4>
 			{% else %}
-				<h4 class="truncate valid-{{ game.away_team.valid_robots() }}" id="away-team-name">{{ game.away_team.name }}</h4>
+				<h4 class="truncate valid-{{ game.away_team.valid_robots() }} valid-robots" id="away-team-name" data-valid-robots="{{ game.home_team.valid_robots() }}" data-school="{{ game.away_team.school }}">{{ game.away_team.name }}</h4>
 			{% endif %}
 		</h4>
 		</div>
 		<div class="col s6">
 			{% if switch_side %}
-				<h4 class="truncate valid-{{ game.away_team.valid_robots() }}" id="away-team-name">{{ game.away_team.name }}</h4>
+				<h4 class="truncate valid-{{ game.away_team.valid_robots() }} valid-robots" id="away-team-name" data-valid-robots="{{ game.home_team.valid_robots() }}" data-school="{{ game.away_team.school }}">{{ game.away_team.name }}</h4>
 			{% else %}
-				<h4 class="truncate valid-{{ game.home_team.valid_robots() }}" id="home-team-name">{{ game.home_team.name }}</h4>
+				<h4 class="truncate valid-{{ game.home_team.valid_robots() }} valid-robots" id="home-team-name" data-valid-robots="{{ game.home_team.valid_robots() }}" data-school="{{ game.home_team.school }}">{{ game.home_team.name }}</h4>
 			{% endif %}
 		</div>
 	</div>
@@ -353,19 +353,24 @@
 				});
 			});
 
-			$(".valid-0").click(function(e) {
+			$(".valid-robots").click(function(e) {
+				var school, team, validRobots, msg;
 				Materialize.Toast.removeAll();
-				Materialize.toast("NO robots inspected yet!", 4000);
-			});
 
-			$(".valid-1").click(function(e) {
-				Materialize.Toast.removeAll();
-				Materialize.toast("Only ONE robot inspected!", 4000);
-			});
+				school = $(this).data("school");
+				team = $(this).text();
+				validRobots = $(this).data("validRobots");
+				msg = team + " (" + school + "):<br>";
 
-			$(".valid-2").click(function(e) {
-				Materialize.Toast.removeAll();
-				Materialize.toast("Both robots inspected :)", 4000);
+				if (validRobots == "2") {
+					msg += "Both robots inspected :)";
+				} else if (validRobots == "1") {
+					msg += "Only ONE robot inspected";
+				} else {
+					msg += "NO robots inspected";
+				}
+
+				Materialize.toast(msg, 4000);
 			});
 
 			tick(performance.now());

@@ -28,7 +28,44 @@ def games_delete_all(competition):
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         games = db.session.query(SoccerGame).filter(
+            SoccerGame.league.has(competition_id=comp.id)
+        ).all()
+        for game in games:
+            db.session.delete(game)
+        db.session.commit()
+        return redirect(url_for("games", competition=comp.id))
+
+
+@app.route("/<competition>/games/delete_unplayed", methods=["GET", "POST"])
+def games_delete_unplayed(competition):
+    comp = get_competition(competition)
+    if not check_user(comp.id, True):
+        return redirect(url_for("login", competition=comp.id))
+    if request.method == "GET":
+        games = db.session.query(SoccerGame).filter(
             SoccerGame.game_finished == False
+        ).filter(
+            SoccerGame.league.has(competition_id=comp.id)
+        ).all()
+        for game in games:
+            db.session.delete(game)
+        db.session.commit()
+        return redirect(url_for("games", competition=comp.id))
+
+
+@app.route("/<competition>/games/delete_league/<league_id>",
+           methods=["GET", "POST"])
+def games_delete_league(competition, league_id):
+    comp = get_competition(competition)
+    league = League.query.filter_by(
+        id=int(league_id),
+        competition_id=comp.id
+    ).one()
+    if not check_user(comp.id, True):
+        return redirect(url_for("login", competition=comp.id))
+    if request.method == "GET":
+        games = db.session.query(SoccerGame).filter(
+            SoccerGame.league.has(id=league.id)
         ).filter(
             SoccerGame.league.has(competition_id=comp.id)
         ).all()

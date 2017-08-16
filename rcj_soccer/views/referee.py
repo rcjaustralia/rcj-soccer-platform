@@ -8,6 +8,7 @@ from rcj_soccer.models import SoccerGame, RequestType, Request
 from rcj_soccer.util import sms
 from rcj_soccer.views.auth import check_user, template
 from rcj_soccer.views.competition import get_competition
+from rcj_soccer.views.games import calculate_system_teams
 
 
 @app.route("/<competition>/referee", methods=["GET"])
@@ -60,6 +61,7 @@ def referee_game_end(competition, id):
         game.home_goals = int(request.form.get("home_goals", game.home_goals))
         game.away_goals = int(request.form.get("away_goals", game.away_goals))
         db.session.commit()
+        calculate_system_teams(comp)
         return redirect(url_for("referee", competition=comp.id))
 
 

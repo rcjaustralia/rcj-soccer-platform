@@ -16,13 +16,18 @@ export RCJ_SECRETS_KEY="YOUR_SECRET_KEY"
 docker run --name=mariadb -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=YOUR_DB_PASS centos/mariadb
 
 docker run -e "RCJ_DATABASE_CONNECTION=$RCJ_DATABASE_CONNECTION" \
--e "RCJ_SMS_USERNAME=$RCJ_SMS_USERNAME" \
--e "RCJ_SMS_PASSWORD=$RCJ_SMS_PASSWORD" \
--e "RCJ_SMS_FROM=$RCJ_SMS_FROM" \
--e "RCJ_SECRETS_KEY=$RCJ_SECRETS_KEY" \
--p 5000:5000 -d --restart always \
---link mariadb:mariadb --name rcj_soccer \
-soccer
+           -e "RCJ_SMS_USERNAME=$RCJ_SMS_USERNAME" \
+           -e "RCJ_SMS_PASSWORD=$RCJ_SMS_PASSWORD" \
+           -e "RCJ_SMS_FROM=$RCJ_SMS_FROM" \
+           -e "RCJ_SECRETS_KEY=$YOUR_SECRET_KEY" \
+           -e "RCJ_DATABASE_MIGRATE=yes" \
+           -e "RCJ_DATABASE_INIT0=yes" \
+           -v "/srv/migrations:/srv/migration_data:rw" \
+           --network="bridge" \
+           --restart always \
+           --name "rcj_soccer" \
+           --link mariadb:mariadb \
+           -d -p 5000:5000 soccer
 ```
 
 Alternatively, use rcj-infrastructure to automatically use the latest version and configure MariaDB.

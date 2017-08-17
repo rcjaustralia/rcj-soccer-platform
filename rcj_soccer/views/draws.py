@@ -76,7 +76,7 @@ def show_draw(comp):
     max_rounds = int(request.form["round"])
     start_time = parse(request.form["start_time"])
     finals_size = int(request.form["finals_size"])
-    total_repeats = int(request.form["total_repeats"])
+    total_repeats = int(request.form["total_repeats"]) + 1
 
     league = League.query.filter_by(id=league_id, competition_id=comp.id).one()
     fields = league.areas

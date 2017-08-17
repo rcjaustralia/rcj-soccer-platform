@@ -21,7 +21,7 @@ def login(competition):
         comp = get_competition(competition)
         user = User.query.filter_by(
             competition_id=comp.id,
-            username=request.form["username"],
+            username=request.form["username"].lower().strip(),
             is_active=True
         ).first()
         if user is None:
@@ -38,7 +38,7 @@ def login(competition):
 def login_check(competition, username):
     comp = get_competition(competition)
     user = User.query.filter_by(
-        username=username, competition_id=comp.id, is_active=True
+        username=username.lower(), competition_id=comp.id, is_active=True
     ).first()
     if user is None:
         return show_username_form(comp)
@@ -99,9 +99,12 @@ def check_user(comp_id, admin=False):
     if "username" not in session or "token" not in session:
         return False
     user = User.query.filter_by(
-        username=session["username"]).filter_by(
-        competition_id=comp_id).filter_by(
-        is_active=True).first()
+        username=session["username"]
+    ).filter_by(
+        competition_id=comp_id
+    ).filter_by(
+        is_active=True
+    ).first()
     if user is None or user.session_token != session["token"]\
             or user.session_expires is None\
             or datetime.now() > user.session_expires:

@@ -17,7 +17,8 @@ class Competition(db.Model):
 
 
 class User(db.Model):
-    competition_id = db.Column(db.String(64), db.ForeignKey("competition.id"))
+    competition_id = db.Column(db.String(64), db.ForeignKey("competition.id"),
+        primary_key=True)
     competition = db.relationship("Competition", uselist=False)
     username = db.Column(db.String(64), primary_key=True)
     phone = db.Column(db.String(12))

@@ -44,7 +44,7 @@
 					</div>
 					<div class="row">
 						<div class="col s12">
-							<button class="btn waves-effect waves-light btn-large" type="submit">Save Only</button>
+							<button class="btn waves-effect waves-light btn-large" type="submit" id="save">Save Only</button>
 						</div>
 					</div>
 				</div>
@@ -82,6 +82,15 @@
 						}
 					});
 				}
+
+				setTimeout(function() {
+					var printers = dymo.label.framework.getPrinters();
+
+					if (printers.length == 0) {
+						$("#print").hide();
+						$("#save").text("Save");
+					}
+				}, 10);
 
 				$("#print").click(function(e) {
 					e.preventDefault();

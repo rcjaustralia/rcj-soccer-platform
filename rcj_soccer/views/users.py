@@ -33,7 +33,6 @@ def user(competition, username):
 
 def show_all_users(comp):
     users = User.query.filter_by(
-        is_active=True,
         competition_id=comp.id
     ).order_by(
         User.username.asc()
@@ -51,8 +50,8 @@ def create_new_user(comp):
     db.session.commit()
 
     sms.send(user.phone,
-             "Welcome to the RCJ soccer platform at http://soccer.rcja.org" +
-             " Your username is: " + user.username)
+             "Welcome to the RCJ soccer platform at http://soccer.rcja.org/" +
+             comp.id + " " + "Your username is: " + user.username)
 
     return show_all_users(comp)
 
@@ -82,8 +81,8 @@ def edit_user(comp, username):
         username=username,
         competition_id=comp.id
     ).one()
-    user.username = request.form["username"]
-    user.phone = request.form["phone"]
+    user.username = request.form["username"].lower().strip()
+    user.phone = re.sub(r"([^0-9\+]+)", "", request.form["phone"])
     user.session_expires = None
     user.session_token = None
     user.auth_token = None

@@ -15,7 +15,15 @@
 			<tbody>
 			{% for user in users %}
 				<tr>
-					<td><a href="{{ url_for('user', competition = comp.id, username = user.username) }}">{{ user.username }}</a></td>
+					<td>
+						{% if user.is_active %}
+						<a href="{{ url_for('user', competition = comp.id, username = user.username) }}">
+							{{ user.username }}
+						</a>
+						{% else %}
+						{{ user.username }} (disabled)
+						{% endif %}
+					</td>
 					<td>{{ user.phone }}</td>
 				</tr>
 			{% endfor %}

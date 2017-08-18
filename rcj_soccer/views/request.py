@@ -11,7 +11,7 @@ from rcj_soccer.views.competition import get_competition
 @app.route("/<competition>/requests", methods=["GET"])
 def request(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return redirect(url_for("login", competition=comp.id))
     return render_template("requests.html", auth=template(comp.id), comp=comp)
 
@@ -20,7 +20,7 @@ def request(competition):
 def get_requests(competition):
     comp = get_competition(competition)
     user = check_user(comp.id)
-    if not user:
+    if not user["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     all = Request.query.filter_by(actioned=False).filter(
@@ -33,7 +33,7 @@ def get_requests(competition):
         Request.id.asc()
     ).all()
 
-    if not user.is_admin:
+    if not user["is_admin"]:
         all = [r for r in all if not r.request_type.only_admin]
 
     all = [flatten_request(comp, r) for r in all]
@@ -44,7 +44,7 @@ def get_requests(competition):
 @app.route("/<competition>/requests/<id>/resolve", methods=["GET"])
 def resolve_request(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     req = Request.query.filter_by(id=int(id)).filter(

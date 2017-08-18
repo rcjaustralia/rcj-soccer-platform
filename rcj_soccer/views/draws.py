@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 @app.route("/<competition>/draws", methods=["GET", "POST"])
 def draws(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login"))
     if request.method == "GET":
         return show_draw_options(comp)
@@ -27,7 +27,7 @@ def draws(competition):
 @app.route("/<competition>/draws_save", methods=["POST"])
 def draws_save(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login"))
     count = int(request.form["game_count"])
     for i in range(count):

@@ -9,7 +9,7 @@ from rcj_soccer.views.competition import get_competition
 @app.route("/<competition>/request_types", methods=["GET", "POST"])
 def request_types(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_all_types(comp)
@@ -20,7 +20,7 @@ def request_types(competition):
 @app.route("/<competition>/request_types/<id>", methods=["GET", "POST"])
 def request_type(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_type(comp, int(id))

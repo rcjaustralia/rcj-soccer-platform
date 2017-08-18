@@ -14,7 +14,7 @@ from rcj_soccer.views.games import calculate_system_teams
 @app.route("/<competition>/referee", methods=["GET"])
 def referee(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_all_unfinished_games(comp)
@@ -23,7 +23,7 @@ def referee(competition):
 @app.route("/<competition>/referee/<id>/0", methods=["GET"])
 def referee_game(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_game(comp, int(id), False)
@@ -32,7 +32,7 @@ def referee_game(competition, id):
 @app.route("/<competition>/referee/<id>/1", methods=["GET"])
 def referee_game_2(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_game(comp, int(id), True)
@@ -41,7 +41,8 @@ def referee_game_2(competition, id):
 @app.route("/<competition>/referee/<id>/end", methods=["GET", "POST"])
 def referee_game_end(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    user = check_user(comp.id)
+    if not user["is_logged_in"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         game = SoccerGame.query.filter_by(id=id).filter(
@@ -57,7 +58,7 @@ def referee_game_end(competition, id):
             "winner_agrees", False) == "true")
         game.loser_agrees = (request.form.get("loser_agrees", False) == "true")
         game.game_finished = True
-        game.ref_id = check_user(comp.id).username
+        game.ref_id = user["user"].id
         game.home_goals = int(request.form.get("home_goals", game.home_goals))
         game.away_goals = int(request.form.get("away_goals", game.away_goals))
         db.session.commit()
@@ -68,7 +69,7 @@ def referee_game_end(competition, id):
 @app.route("/<competition>/referee/<id>/state", methods=["GET"])
 def update_game_state(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -94,7 +95,7 @@ def update_game_state(competition, id):
 @app.route("/<competition>/referee/<id>/toggle_clock", methods=["GET"])
 def update_game_clock(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -111,7 +112,7 @@ def update_game_clock(competition, id):
 @app.route("/<competition>/referee/<id>/next_state", methods=["GET"])
 def next_game_state(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -135,7 +136,7 @@ def next_game_state(competition, id):
 @app.route("/<competition>/referee/<id>/prev_state", methods=["GET"])
 def prev_game_state(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -159,7 +160,7 @@ def prev_game_state(competition, id):
 @app.route("/<competition>/referee/<id>/home_goal", methods=["GET"])
 def score_home_goal(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -177,7 +178,7 @@ def score_home_goal(competition, id):
 @app.route("/<competition>/referee/<id>/away_goal", methods=["GET"])
 def score_away_goal(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -195,7 +196,7 @@ def score_away_goal(competition, id):
 @app.route("/<competition>/referee/<id>/home_goal_cancel", methods=["GET"])
 def score_home_goal_cancel(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -210,7 +211,7 @@ def score_home_goal_cancel(competition, id):
 @app.route("/<competition>/referee/<id>/away_goal_cancel", methods=["GET"])
 def score_away_goal_cancel(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -225,7 +226,7 @@ def score_away_goal_cancel(competition, id):
 @app.route("/<competition>/referee/<id>/damage_home_1", methods=["GET"])
 def damage_home_1(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -242,7 +243,7 @@ def damage_home_1(competition, id):
 @app.route("/<competition>/referee/<id>/damage_home_2", methods=["GET"])
 def damage_home_2(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -259,7 +260,7 @@ def damage_home_2(competition, id):
 @app.route("/<competition>/referee/<id>/damage_away_1", methods=["GET"])
 def damage_away_1(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -276,7 +277,7 @@ def damage_away_1(competition, id):
 @app.route("/<competition>/referee/<id>/damage_away_2", methods=["GET"])
 def damage_away_2(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -293,7 +294,7 @@ def damage_away_2(competition, id):
 @app.route("/<competition>/referee/<id>/reset", methods=["GET"])
 def reset_game(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     game = SoccerGame.query.filter_by(id=id).filter(
@@ -316,12 +317,12 @@ def reset_game(competition, id):
 @app.route("/<competition>/referee/<id>/request/<rtype>", methods=["GET"])
 def send_request(competition, id, rtype):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_logged_in"]:
         return json.dumps({"error": "login_fail"})
 
     req = Request()
     req.request_type_id = int(rtype)
-    req.user_id = check_user(comp.id).username
+    req.user_id = check_user(comp.id)["user"].id
     req.game_id = int(id)
 
     db.session.add(req)

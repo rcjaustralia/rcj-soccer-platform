@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 @app.route("/<competition>/leagues", methods=["GET", "POST"])
 def leagues(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_all_leagues(comp)
@@ -23,7 +23,7 @@ def leagues(competition):
 @app.route("/<competition>/league/<id>", methods=["GET", "POST"])
 def league(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_league(comp, int(id))

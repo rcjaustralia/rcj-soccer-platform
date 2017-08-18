@@ -17,10 +17,10 @@ class Competition(db.Model):
 
 
 class User(db.Model):
-    competition_id = db.Column(db.String(64), db.ForeignKey("competition.id"),
-        primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    competition_id = db.Column(db.String(64), db.ForeignKey("competition.id"))
     competition = db.relationship("Competition", uselist=False)
-    username = db.Column(db.String(64), primary_key=True)
+    username = db.Column(db.String(64), index=True)
     phone = db.Column(db.String(12))
     session_token = db.Column(db.String(255), unique=True)
     session_expires = db.Column(db.DateTime)
@@ -178,7 +178,7 @@ class SoccerGame(db.Model):
     home_damaged_2 = db.Column(db.DateTime)
     away_damaged_1 = db.Column(db.DateTime)
     away_damaged_2 = db.Column(db.DateTime)
-    ref_id = db.Column(db.String(64), db.ForeignKey("user.username"))
+    ref_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     referee = db.relationship("User", uselist=False, backref="referee")
 
     def time(self):
@@ -216,7 +216,7 @@ class RequestType(db.Model):
     only_admin = db.Column(db.Boolean, default=False)
     priority = db.Column(db.Integer, default=50)
     send_text = db.Column(db.Boolean, default=False)
-    user_id = db.Column(db.String(64), db.ForeignKey("user.username"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user = db.relationship("User", uselist=False, backref="user")
     is_active = db.Column(db.Boolean, default=True)
 
@@ -226,7 +226,7 @@ class Request(db.Model):
     request_type_id = db.Column(db.Integer, db.ForeignKey("request_type.id"))
     request_type = db.relationship(
         "RequestType", uselist=False, backref="request_type")
-    user_id = db.Column(db.String(64), db.ForeignKey("user.username"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user = db.relationship("User", uselist=False, backref="request_user")
     received = db.Column(db.DateTime, default=datetime.datetime.now)
     game_id = db.Column(db.Integer, db.ForeignKey("soccer_game.id"))

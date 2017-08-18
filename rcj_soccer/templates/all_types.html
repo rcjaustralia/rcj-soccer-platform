@@ -53,7 +53,7 @@
 				<div class="input-field col s4">
 					<select id="user_id" name="user_id">
 						{% for user in users %}
-						<option value="{{ user.username }}">{{ user.username }}</option>
+						<option value="{{ user.id }}">{{ user.username }}</option>
 						{% endfor %}
 					</select>
 					<label for="user_id">Send To</label>

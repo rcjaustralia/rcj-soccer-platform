@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 @app.route("/<competition>/games", methods=["GET", "POST"])
 def games(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login"))
     if request.method == "GET":
         return show_all_games(comp)
@@ -24,7 +24,7 @@ def games(competition):
 @app.route("/<competition>/games/delete_all", methods=["GET", "POST"])
 def games_delete_all(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         games = db.session.query(SoccerGame).filter(
@@ -39,7 +39,7 @@ def games_delete_all(competition):
 @app.route("/<competition>/games/delete_unplayed", methods=["GET", "POST"])
 def games_delete_unplayed(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         games = db.session.query(SoccerGame).filter(
@@ -61,7 +61,7 @@ def games_delete_league(competition, league_id):
         id=int(league_id),
         competition_id=comp.id
     ).one()
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         games = db.session.query(SoccerGame).filter(
@@ -78,7 +78,7 @@ def games_delete_league(competition, league_id):
 @app.route("/<competition>/games/populate_all", methods=["GET", "POST"])
 def games_populate_all(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         calculate_system_teams(comp)
@@ -88,7 +88,7 @@ def games_populate_all(competition):
 @app.route("/<competition>/game/<id>", methods=["GET", "POST"])
 def game(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_game(comp, int(id))
@@ -141,9 +141,10 @@ def show_game(comp, id):
 
 def edit_game(comp, id):
     if request.form["action"] == "delete":
-        SoccerGame.query.filter_by(id=int(id)).filter(
+        game = SoccerGame.query.filter_by(id=int(id)).filter(
             SoccerGame.league.has(competition_id=comp.id)
-        ).delete()
+        ).one()
+        db.session.delete(game)
     else:
         game = SoccerGame.query.filter_by(id=int(id)).filter(
             SoccerGame.league.has(competition_id=comp.id)

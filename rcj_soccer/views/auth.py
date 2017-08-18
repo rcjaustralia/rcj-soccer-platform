@@ -76,7 +76,7 @@ def send_sms(phone, token):
     logger.info("SENDING SMS TOKEN: {0}".format(token))
     sms.send(
         phone,
-        "Your security code for logging into RoboCup Junior is: " + str(token))
+        str(token) + " is your security code for logging into RoboCup Junior")
 
 
 @app.route("/<competition>/logout")
@@ -90,36 +90,56 @@ def logout(competition):
     return redirect(url_for("results", competition=comp.id))
 
 
-def check_user(comp_id, admin=False):
-    if User.query.filter_by(
-        competition_id=comp_id, is_active=True
-    ).count() == 0:
-        return True
+def check_user(comp_id):
+    user = None
+    is_valid = False
+    is_admin = False
 
-    if "username" not in session or "token" not in session:
-        return False
-    user = User.query.filter_by(
-        username=session["username"]
-    ).filter_by(
-        competition_id=comp_id
-    ).filter_by(
-        is_active=True
-    ).first()
-    if user is None or user.session_token != session["token"]\
-            or user.session_expires is None\
-            or datetime.now() > user.session_expires:
-        return False
-    if admin and (not user.is_admin and User.query.filter_by(
-        is_active=True, is_admin=True, competition_id=comp_id
-    ).count() > 0):
-        return False
-    return user
+    if "username" in session and "token" in session:
+        user = User.query.filter_by(
+            username=session["username"]
+        ).filter_by(
+            competition_id=comp_id
+        ).filter_by(
+            is_active=True
+        ).first()
 
+    if user is not None and user.session_token == session["token"]\
+            and user.session_expires is not None\
+            and datetime.now() <= user.session_expires:
+        is_valid = True
 
-def template(comp_id, fixed=False):
+    if is_valid and user.is_admin:
+        is_admin = True
+
+    if not is_valid:
+        is_valid = User.query.filter_by(
+            competition_id=comp_id
+        ).filter_by(
+            is_active=True
+        ).count() == 0
+
+    if not is_admin:
+        is_admin = User.query.filter_by(
+            competition_id=comp_id
+        ).filter_by(
+            is_admin=True
+        ).filter_by(
+            is_active=True
+        ).count() == 0
+
     return {
-        "is_logged_in": check_user(comp_id),
-        "is_admin": check_user(comp_id, True),
-        "fixed_navbar": fixed,
+        "is_logged_in": is_valid,
+        "is_admin": is_admin,
+        "user": user
+    }
+
+
+def template(comp_id):
+    user_info = check_user(comp_id)
+
+    return {
+        "is_logged_in": user_info["is_logged_in"],
+        "is_admin": user_info["is_admin"],
         "year": datetime.utcnow().year
     }

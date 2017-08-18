@@ -9,7 +9,7 @@ from rcj_soccer.views.competition import get_competition
 @app.route("/<competition>/scrutineer", methods=["GET", "POST"])
 def scrutineer_teams(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, False):
+    if not check_user(comp.id)["is_logged_in"]:
         return redirect(url_for("login"), competition=comp.id)
     if request.method == "GET":
         return show_all_teams(comp)
@@ -18,7 +18,7 @@ def scrutineer_teams(competition):
 @app.route("/<competition>/scrutineer/delete_all", methods=["GET", "POST"])
 def scrutineer_delete_all(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, False):
+    if not check_user(comp.id)["is_logged_in"]:
         return redirect(url_for("login"), competition=comp.id)
     if request.method == "GET":
         teams = Team.query.filter_by(
@@ -37,7 +37,7 @@ def scrutineer_delete_all(competition):
 @app.route("/<competition>/scrutineer/<id>", methods=["GET", "POST"])
 def scrutineer(competition, id):
     comp = get_competition(competition)
-    if not check_user(comp.id, False):
+    if not check_user(comp.id)["is_logged_in"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_team(comp, int(id))
@@ -48,7 +48,7 @@ def scrutineer(competition, id):
 @app.route("/<competition>/scrutineer/<id>/label/<n>", methods=["GET"])
 def label(competition, id, n):
     comp = get_competition(competition)
-    if not check_user(comp.id, False):
+    if not check_user(comp.id)["is_logged_in"]:
         return redirect(url_for("login", competition=comp.id))
     team = Team.query.filter_by(id=int(id)).filter(
         Team.league.has(competition_id=comp.id)

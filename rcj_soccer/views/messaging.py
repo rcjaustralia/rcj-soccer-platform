@@ -10,7 +10,7 @@ from rcj_soccer.views.competition import get_competition
 @app.route("/<competition>/messaging", methods=["GET", "POST"])
 def messaging(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect("/login", competition=comp.id)
     if request.method == "GET":
         return show_form(comp)

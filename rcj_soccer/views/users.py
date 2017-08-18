@@ -12,7 +12,7 @@ from rcj_soccer.views.competition import get_competition
 @app.route("/<competition>/users", methods=["GET", "POST"])
 def users(competition):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_all_users(comp)
@@ -23,7 +23,7 @@ def users(competition):
 @app.route("/<competition>/user/<username>", methods=["GET", "POST"])
 def user(competition, username):
     comp = get_competition(competition)
-    if not check_user(comp.id, True):
+    if not check_user(comp.id)["is_admin"]:
         return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_user(comp, username)
@@ -46,12 +46,17 @@ def create_new_user(comp):
     user.username = request.form["username"].lower().strip()
     user.phone = re.sub(r"([^0-9\+]+)", "", request.form["phone"])
     user.competition_id = comp.id
-    db.session.add(user)
-    db.session.commit()
 
-    sms.send(user.phone,
-             "Welcome to the RCJ soccer platform at http://soccer.rcja.org/" +
-             comp.id + " " + "Your username is: " + user.username)
+    if User.query.filter_by(
+        username=user.username,
+        competition_id=comp.id
+    ).count() == 0:
+        db.session.add(user)
+        db.session.commit()
+        sms.send(user.phone,
+                 "Welcome to the RCJ soccer platform at " +
+                 "https://soccer.rcja.org/" + comp.id + " " +
+                 "Your username is: " + user.username)
 
     return show_all_users(comp)
 
@@ -62,15 +67,11 @@ def show_user(comp, username):
         competition_id=comp.id
     ).one()
 
-    can_delete = True
-    count = User.query.filter_by(
+    can_delete = User.query.filter_by(
         competition_id=comp.id,
         is_admin=True,
         is_active=True
-    ).count()
-
-    if count <= 1:
-        can_delete = False
+    ).count() > 1
 
     return render_template("user.html", user=user, auth=template(comp.id),
                            comp=comp, can_delete=can_delete)
@@ -81,7 +82,15 @@ def edit_user(comp, username):
         username=username,
         competition_id=comp.id
     ).one()
-    user.username = request.form["username"].lower().strip()
+
+    new_username = request.form["username"].lower().strip()
+
+    if new_username == username or User.query.filter_by(
+        username=new_username,
+        competition_id=comp.id
+    ).count() == 0:
+        user.username = new_username
+
     user.phone = re.sub(r"([^0-9\+]+)", "", request.form["phone"])
     user.session_expires = None
     user.session_token = None

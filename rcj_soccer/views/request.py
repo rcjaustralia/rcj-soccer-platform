@@ -63,7 +63,7 @@ def flatten_request(comp, request):
         "league": request.game.league.name,
         "field": request.game.field,
         "received": request.received.isoformat(),
-        "username": request.user.username,
+        "username": "???" if request.user is None else request.user.username,
         "url": url_for("resolve_request", competition=comp.id, id=request.id),
         "id": request.id,
     }

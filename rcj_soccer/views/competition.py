@@ -3,7 +3,7 @@ from rcj_soccer.models import Competition
 from flask import render_template, jsonify, request
 from datetime import datetime
 from dateutil.parser import parse
-from rcj_soccer.util import config
+from rcj_soccer.util import config, obj_to_dict
 
 import logging
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ def list_competitions():
 @app.route("/api/competitions")
 def api_list_competitions():
     competitions = Competition.query.order_by(Competition.start_date).all()
-    return jsonify(competitions)
+    return jsonify([obj_to_dict(comp) for comp in competitions])
 
 
 @app.route("/api/competitions/<competition>/<token>",
@@ -28,7 +28,7 @@ def api_list_competitions():
 def api_competition(comp, token):
     if request.method == "GET":
         competition = Competition.query.filter_by(id=comp).one()
-        return jsonify(competition)
+        return jsonify(obj_to_dict(competition))
 
     if token != config.get("RCJ_API_TOKEN", ""):
         return jsonify({"error": "invalid token"})
@@ -75,6 +75,7 @@ def api_competition(comp, token):
                 competition.event_sponsor_img = body["event_sponsor"]["img"]
 
         db.session.commit()
+        return jsonify(obj_to_dict(competition))
 
 
 def get_competition(id):

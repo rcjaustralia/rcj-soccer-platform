@@ -41,7 +41,7 @@ jobs:
           command: |
             TAG="auto-$CIRCLE_BUILD_NUM"
             . venv/bin/activate
-            ./build_docker -t rcjaustralia/rcj-soccer-platform:$TAG
+            ./build_docker.sh -t rcjaustralia/rcj-soccer-platform:$TAG
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push rcjaustralia/rcj-soccer-platform:$TAG
             docker tag rcjaustralia/rcj-soccer-platform:latest

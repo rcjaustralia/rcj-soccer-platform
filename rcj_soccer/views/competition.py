@@ -3,7 +3,7 @@ from rcj_soccer.models import Competition
 from flask import render_template, jsonify, request
 from datetime import datetime
 from dateutil.parser import parse
-from rcj_soccer.utl import config
+from rcj_soccer.util import config
 
 import logging
 logger = logging.getLogger(__name__)

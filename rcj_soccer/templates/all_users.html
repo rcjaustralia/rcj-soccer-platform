@@ -16,13 +16,9 @@
 			{% for user in users %}
 				<tr>
 					<td>
-						{% if user.is_active %}
 						<a href="{{ url_for('user', competition = comp.id, username = user.username) }}">
-							{{ user.username }}
+							{{ user.username }}{% if not user.is_active %} (disabled){% endif %}
 						</a>
-						{% else %}
-						{{ user.username }} (disabled)
-						{% endif %}
 					</td>
 					<td>{{ user.phone }}</td>
 				</tr>

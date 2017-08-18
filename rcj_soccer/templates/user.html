@@ -27,8 +27,11 @@
 						</button>
 					</div>
 					<div class="col s3">
-						{% if can_delete %}
-						<button class="btn waves-effect waves-light btn-large red" type="submit" name="action" value="delete">Disable
+						{% if not user.is_active %}
+						<button class="btn waves-effect waves-light btn-large red" type="submit" name="action" value="enable">Activate
+						</button>
+						{% elif can_delete %}
+						<button class="btn waves-effect waves-light btn-large red" type="submit" name="action" value="delete">Deactivate
 						</button>
 						{% else %}
 						Cannot delete last admin

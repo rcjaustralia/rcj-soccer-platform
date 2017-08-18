@@ -1,5 +1,7 @@
 # RCJ Soccer Scoring Platform
 
+*Build Status:* [![CircleCI](https://circleci.com/gh/rcjaustralia/rcj-soccer-platform.svg?style=svg)](https://circleci.com/gh/rcjaustralia/rcj-soccer-platform)
+
 This system manages the soccer draws, refereeing and scoring for RoboCup Junior Australia.
 
 To configure, pass in environment variables, start MariaDB and then run the image:

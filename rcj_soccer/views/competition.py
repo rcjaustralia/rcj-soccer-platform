@@ -19,15 +19,17 @@ def list_competitions():
 
 @app.route("/api/competitions")
 def api_list_competitions():
-    competitions = list(
-        Competition.query.order_by(Competition.start_date).all()
-    )
-    return jsonify(
-        list([obj_to_dict(comp) for comp in competitions])
-    )
+    competitions = Competition.query.order_by(Competition.start_date).all()
+    data = []
+
+    for competition in competitions:
+        logger.warn("{0}".format(str(dir(competition))))
+        data.append(obj_to_dict(competition))
+
+    return jsonify(data)
 
 
-@app.route("/api/competitions/<competition>/<token>",
+@app.route("/api/competitions/<comp>/<token>",
            methods=["GET", "POST", "DELETE", "PUT"])
 def api_competition(comp, token):
     if request.method == "GET":

@@ -19,8 +19,12 @@ def list_competitions():
 
 @app.route("/api/competitions")
 def api_list_competitions():
-    competitions = Competition.query.order_by(Competition.start_date).all()
-    return jsonify([obj_to_dict(comp) for comp in competitions])
+    competitions = list(
+        Competition.query.order_by(Competition.start_date).all()
+    )
+    return jsonify(
+        list([obj_to_dict(comp) for comp in competitions])
+    )
 
 
 @app.route("/api/competitions/<competition>/<token>",

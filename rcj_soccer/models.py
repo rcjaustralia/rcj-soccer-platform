@@ -14,6 +14,7 @@ class Competition(db.Model):
     event_sponsor_link = db.Column(db.String(128))
     event_sponsor_img = db.Column(db.String(200))
     is_active = db.Column(db.Boolean, default=True)
+    start_date = db.Column(db.DateTime)
 
 
 class User(db.Model):

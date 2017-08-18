@@ -15,9 +15,11 @@ def messaging(competition):
     if request.method == "GET":
         return show_form(comp)
     else:
-        phones = ",".join(request.form.getlist("phones"))
+        phones = request.form.getlist("phones")
         message = request.form["message"].strip()
-        sms.send(phones, message)
+
+        for phone in phones:
+            sms.get_provider().send(phone.strip(), message)
         return show_form(comp)
 
 
@@ -27,6 +29,6 @@ def show_form(comp):
     ).order_by(
         User.username.asc()
     ).all()
-    balance = sms.balance()
+    provider = sms.get_provider()
     return render_template("messaging.html", users=users, comp=comp,
-                           auth=template(comp.id), balance=balance)
+                           auth=template(comp.id), provider=provider)

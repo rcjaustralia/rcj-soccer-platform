@@ -334,15 +334,18 @@ def send_request(competition, id, rtype):
         return json.dumps({"error": "login_fail"})
 
     if req.request_type.send_text:
-        sms.send(req.request_type.user.phone,
-                 "REQUEST: {type} at {league} {field} by {user} ({time})"
-                 .format(**{
-                         "type": req.request_type.name,
-                         "league": req.game.league.name,
-                         "field": req.game.field,
-                         "user": req.user.username,
-                         "time": req.received.strftime("%X"),
-                         }))
+        sms.get_provider().send(
+            req.request_type.user.phone,
+            "REQUEST: {type} at {league} {field} by {user} ({time})".format(
+                **{
+                    "type": req.request_type.name,
+                    "league": req.game.league.name,
+                    "field": req.game.field,
+                    "user": req.user.username,
+                    "time": req.received.strftime("%X"),
+                }
+            )
+        )
     return json.dumps({"success": "send_request"})
 
 

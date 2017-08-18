@@ -53,10 +53,12 @@ def create_new_user(comp):
     ).count() == 0:
         db.session.add(user)
         db.session.commit()
-        sms.send(user.phone,
-                 "Welcome to the RCJ soccer platform at " +
-                 "https://soccer.rcja.org/" + comp.id + " " +
-                 "Your username is: " + user.username)
+        sms.get_provider().send(
+            user.phone,
+            "Welcome to the RCJ soccer platform at " +
+            "https://soccer.rcja.org/" + comp.id + " " +
+            "Your username is: " + user.username
+        )
 
     return show_all_users(comp)
 

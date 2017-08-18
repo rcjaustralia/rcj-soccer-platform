@@ -2,7 +2,7 @@
 {% block title %}Messaging{% endblock %}
 {% block content %}
 	<div class="row">
-		<h1>Messaging ({{ balance }} remaining)</h1>
+		<h1>Messaging{% if provider.has_balance() %} <small>({{ provider.balance() }} remaining)</small>{% endif %}</h1>
 	</div>
 	<div class="row">
 		<form class="col s12" action="{{ url_for('messaging', competition = comp.id) }}" method="post">

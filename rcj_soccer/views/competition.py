@@ -34,7 +34,7 @@ def api_competition(comp, token):
         competition = Competition.query.filter_by(id=comp).one()
         return jsonify(obj_to_dict(competition))
 
-    if token != config.get("RCJ_API_TOKEN", ""):
+    if token != config.get("api", "token"):
         return jsonify({"error": "invalid token"})
 
     if request.method == "POST":

@@ -13,6 +13,7 @@ export RCJ_SMS_PASSWORD="YOUR_SMS_BROADCAST_PASSWORD"
 export RCJ_SMS_PROVIDER="sms_broadcast"
 export RCJ_SMS_FROM="RoboCupJnr"
 export RCJ_SECRETS_KEY="YOUR_SECRET_KEY"
+export RCJ_API_TOKEN="ANOTHER_SECRET_STRING"
 
 ./build_docker.sh -t soccer
 
@@ -26,6 +27,7 @@ docker run -e "RCJ_DATABASE_CONNECTION=$RCJ_DATABASE_CONNECTION" \
            -e "RCJ_SECRETS_KEY=$YOUR_SECRET_KEY" \
            -e "RCJ_DATABASE_MIGRATE=yes" \
            -e "RCJ_DATABASE_INIT0=yes" \
+           -e "RCJ_API_TOKEN=$RCJ_API_TOKEN" \
            -v "/srv/migrations:/srv/migration_data:rw" \
            --network="bridge" \
            --restart always \

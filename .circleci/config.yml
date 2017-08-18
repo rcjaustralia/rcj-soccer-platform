@@ -1,0 +1,49 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+          - buildenv
+      - run:
+          name: install Python build tools
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install wheel
+      - run:
+          name: download Docker
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+      - save_cache:
+          paths:
+            - ./venv
+            - /tmp/docker
+          key: buildenv
+      - run:
+          name: install Docker
+          command: |
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: build image
+          command: |
+            TAG="auto-$CIRCLE_BUILD_NUM"
+            . venv/bin/activate
+            ./build_docker -t rcjaustralia/rcj-soccer-platform:$TAG
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker push rcjaustralia/rcj-soccer-platform:$TAG
+            docker tag rcjaustralia/rcj-soccer-platform:latest
+            docker push rcjaustralia/rcj-soccer-platform:latest
+          

@@ -73,7 +73,7 @@ def show_user(comp, username):
         competition_id=comp.id,
         is_admin=True,
         is_active=True
-    ).count() > 1
+    ).count() > 0
 
     return render_template("user.html", user=user, auth=template(comp.id),
                            comp=comp, can_delete=can_delete)

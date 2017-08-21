@@ -173,7 +173,7 @@ def calculate_system_teams(comp):
     ).all()
     games = filter(lambda g: g.is_system_game(), games)
     for game in games:
-        logger.error("{0} {1}".format(game.id, game.can_populate()))
+        logger.info("{0} {1}".format(game.id, game.can_populate()))
         if not game.can_populate():
             continue
 

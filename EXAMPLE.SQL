@@ -1,3 +1,0 @@
-INSERT INTO competition(id, name, fb_link, twitter_link, event_sponsor_link, event_sponsor_img, is_active) VALUES('qld2017', 'Queensland Championships 2017', 'http://fb.com', '#RCJQ17', 'http://tris10.com/', 'https://tris10.com/files/img/logo_web.png', 1);
-
-INSERT INTO competition(id, name, fb_link, twitter_link, event_sponsor_link, event_sponsor_img, is_active) VALUES('aus2017', 'National Championships 2017', 'http://fb.com', '#RCJA17', 'http://tris10.com/', 'https://tris10.com/files/img/logo_web.png', 1);

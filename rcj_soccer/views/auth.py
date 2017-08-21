@@ -82,7 +82,7 @@ def send_sms(phone, token):
 @app.route("/<competition>/logout")
 def logout(competition):
     comp = get_competition(competition)
-    user = check_user(comp.id)
+    user = check_user(comp.id)["user"]
     if user:
         user.session_token = None
         user.session_expires = None

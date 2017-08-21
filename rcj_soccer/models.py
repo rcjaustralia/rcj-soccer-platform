@@ -200,11 +200,14 @@ class SoccerGame(db.Model):
     def can_populate(self):
         if not self.is_system_game():
             return False
-        games = SoccerGame.query.filter_by(game_finished=False).filter_by(
-            league_id=self.league_id)\
-            .filter(SoccerGame.round < self.round).all()
+        games = SoccerGame.query.filter_by(
+            game_finished=False,
+            league_id=self.league_id
+        ).filter(
+            SoccerGame.round < self.round
+        ).all()
         for game in games:
-            if not game.home_team.is_bye and not game.away_team.is_bye:
+            if game.home_team.is_bye or game.away_team.is_bye:
                 return False
         return True
 

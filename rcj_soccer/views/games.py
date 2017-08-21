@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def games(competition):
     comp = get_competition(competition)
     if not check_user(comp.id)["is_admin"]:
-        return redirect(url_for("login"))
+        return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_all_games(comp)
     else:

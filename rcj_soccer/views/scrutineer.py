@@ -10,7 +10,7 @@ from rcj_soccer.views.competition import get_competition
 def scrutineer_teams(competition):
     comp = get_competition(competition)
     if not check_user(comp.id)["is_logged_in"]:
-        return redirect(url_for("login"), competition=comp.id)
+        return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_all_teams(comp)
 
@@ -19,7 +19,7 @@ def scrutineer_teams(competition):
 def scrutineer_delete_all(competition):
     comp = get_competition(competition)
     if not check_user(comp.id)["is_logged_in"]:
-        return redirect(url_for("login"), competition=comp.id)
+        return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         teams = Team.query.filter_by(
             is_system=False, is_bye=False

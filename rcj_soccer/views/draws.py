@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def draws(competition):
     comp = get_competition(competition)
     if not check_user(comp.id)["is_admin"]:
-        return redirect(url_for("login"))
+        return redirect(url_for("login", competition=comp.id))
     if request.method == "GET":
         return show_draw_options(comp)
     else:
@@ -28,7 +28,7 @@ def draws(competition):
 def draws_save(competition):
     comp = get_competition(competition)
     if not check_user(comp.id)["is_admin"]:
-        return redirect(url_for("login"))
+        return redirect(url_for("login", competition=comp.id))
     count = int(request.form["game_count"])
     for i in range(count):
         game = SoccerGame()

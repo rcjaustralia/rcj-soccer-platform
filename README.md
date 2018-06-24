@@ -15,9 +15,9 @@ export RCJ_SMS_FROM="RoboCupJnr"
 export RCJ_SECRETS_KEY="YOUR_SECRET_KEY"
 export RCJ_API_TOKEN="ANOTHER_SECRET_STRING"
 
-./build_docker.sh -t soccer
+./build_docker.sh -t soccer  # Only required if building your own image
 
-docker run --name=mariadb -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=YOUR_DB_PASS centos/mariadb
+docker run --restart always -v /srv/mariadb:/var/lib/mysql:rw --name=mariadb -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD="YOUR_DB_PASS" centos/mariadb
 
 docker run -e "RCJ_DATABASE_CONNECTION=$RCJ_DATABASE_CONNECTION" \
            -e "RCJ_SMS_USERNAME=$RCJ_SMS_USERNAME" \
@@ -33,7 +33,7 @@ docker run -e "RCJ_DATABASE_CONNECTION=$RCJ_DATABASE_CONNECTION" \
            --restart always \
            --name "rcj_soccer" \
            --link mariadb:mariadb \
-           -d -p 5000:5000 soccer
+           -d -p 5000:5000 rcjaustralia/rcj-soccer-platform
 ```
 
 To use Twilio instead of SMS Broadcast as the messaging provider, use the following environment variables for `RCJ_SMS`:

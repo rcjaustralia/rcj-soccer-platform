@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 @app.route("/")
 def list_competitions():
     competitions = Competition.query.filter_by(is_active=True)\
-        .order_by(Competition.start_date, Competition.name).all()
+        .order_by(Competition.start_date.desc(), Competition.name).all()
     return render_template("competitions.html", competitions=competitions,
                            year=datetime.utcnow().year)
 

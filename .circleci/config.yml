@@ -35,7 +35,7 @@ jobs:
       - run:
           name: install Docker
           command: |
-            mv -n /tmp/docker/* /usr/bin
+            sudo mv -n /tmp/docker/* /usr/bin
       - run:
           name: build image
           command: |

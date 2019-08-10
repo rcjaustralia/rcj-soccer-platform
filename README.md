@@ -2,8 +2,14 @@
 
 *Build Status:* [![CircleCI](https://circleci.com/gh/rcjaustralia/rcj-soccer-platform.svg?style=svg)](https://circleci.com/gh/rcjaustralia/rcj-soccer-platform)
 
-This system manages the soccer draws, refereeing and scoring for RoboCup Junior Australia.
+This system manages the soccer draws, robot scrutiny, refereeing, scoring and volunteer management for RoboCup Junior Australia.
 
+## Pre-Requisites
+* Vultr DNS (required for [rcj-app-server](https://github.com/rcjaustralia/rcj-app-server))
+* For small (<25 teams), a VM with 1 core, 2GB memory and 20GB disk space is sufficient. For larger competitions (up to 250 teams), 4 cores, 8GB memory and 32GB disk space is sufficient. All of the instructions below were done on a CentOS 7 VM set up on Vultr.
+* [SMS Broadcast](https://www.smsbroadcast.com.au) account with enough credits for each user to login.
+
+## Usage
 To configure, pass in environment variables, start MariaDB and then run the image:
 
 ```bash
@@ -15,7 +21,8 @@ export RCJ_SMS_FROM="RoboCupJnr"
 export RCJ_SECRETS_KEY="YOUR_SECRET_KEY"
 export RCJ_API_TOKEN="ANOTHER_SECRET_STRING"
 
-./build_docker.sh -t soccer  # Only required if building your own image
+# To build from the source code:
+# ./build_docker.sh -t soccer
 
 docker network create --driver bridge rcj_network
 

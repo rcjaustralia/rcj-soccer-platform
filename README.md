@@ -6,14 +6,17 @@ This system manages the soccer draws, robot scrutiny, refereeing, scoring and vo
 
 ## Pre-Requisites
 * Vultr DNS (required for [rcj-app-server](https://github.com/rcjaustralia/rcj-app-server))
-* For small (<25 teams), a VM with 1 core, 2GB memory and 20GB disk space is sufficient. For larger competitions (up to 250 teams), 4 cores, 8GB memory and 32GB disk space is sufficient. All of the instructions below were done on a CentOS 7 VM set up on Vultr.
+* For small (<25 teams), a VM with 1 core, 2GB memory and 20GB disk space is sufficient. For larger competitions (up to 250 teams), 4 cores, 8GB memory and 32GB disk space is sufficient. All of the instructions below were done on a CentOS 7 VM and no other OS has been tested. Due to the real-time refereeing component, it is recommended to run the VM as close to the competition location as possible to minmise network latency (for this reason, all Australian competitions were run on a Sydney-based VM).
 * [SMS Broadcast](https://www.smsbroadcast.com.au) account with enough credits for each user to login.
+* Docker [installed on the VM](https://docs.docker.com/install/linux/docker-ce/centos/)
 
 ## Usage
-To configure, pass in environment variables, start MariaDB and then run the image:
+To run, pass in environment variables, start MariaDB and then run the image. Replace the `YOUR_*` environment variables with the real values.
+
+`YOUR_SECRET_KEY` and `ANOTHER_SECRET_STRING` should be random (and different!) 16 to 64 character strings. Feed from `/dev/urandom` or just smash on your keyboard to generate them - they can contain any character, but make sure to escape any special characters when setting the environment variables. These strings are used to salt login information and encrypt session tokens.
 
 ```bash
-export RCJ_DATABASE_CONNECTION="mysql+pymysql://YOUR_DB_USER:YOUR_DB_PASS@mariadb/YOUR_DB_NAME"
+export RCJ_DATABASE_CONNECTION="mysql+pymysql://root:YOUR_DB_PASS@mariadb/YOUR_DB_NAME"
 export RCJ_SMS_USERNAME="YOUR_SMS_BROADCAST_ACCOUNT"
 export RCJ_SMS_PASSWORD="YOUR_SMS_BROADCAST_PASSWORD"
 export RCJ_SMS_PROVIDER="sms_broadcast"
@@ -68,6 +71,6 @@ $ mysql -uroot -pYOUR_DB_PASS YOUR_DB_NAME
 $ exit
 ```
 
-You will then need to configure the RCJ App Server (required for SSL): https://github.com/rcjaustralia/rcj-app-server
+You will then need to configure the RCJ App Server (required for SSL and optional load balancing if >500 teams): https://github.com/rcjaustralia/rcj-app-server
 
 **Note: You MUST create a user as soon as a competition is created, and then login as them and mark them as an as Administrator on the Users panel.** 

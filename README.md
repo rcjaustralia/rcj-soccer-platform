@@ -6,14 +6,15 @@ This system manages the soccer draws, robot scrutiny, refereeing, scoring and vo
 
 ## Pre-Requisites
 * Vultr DNS (required for [rcj-app-server](https://github.com/rcjaustralia/rcj-app-server))
-* For small (<25 teams), a VM with 1 core, 2GB memory and 20GB disk space is sufficient. For larger competitions (up to 250 teams), 4 cores, 8GB memory and 32GB disk space is sufficient. All of the instructions below were done on a CentOS 7 VM and no other OS has been tested. Due to the real-time refereeing component, it is recommended to run the VM as close to the competition location as possible to minmise network latency (for this reason, all Australian competitions were run on a Sydney-based VM).
+* For small (<25 teams), a VM with 2 core, 4GB memory and 20GB disk space is sufficient. For larger competitions (up to 250 teams), 4 cores, 8GB memory and 32GB disk space is sufficient. All of the instructions below were done on a CentOS 8 VM but will work for CentOS 7 too (set the alias of `podman` to `docker`). Due to the real-time refereeing component, it is recommended to run the VM as close to the competition location as possible to minmise network latency (for this reason, all Australian competitions were run on a Sydney-based VM).
 * [SMS Broadcast](https://www.smsbroadcast.com.au) account with enough credits for each user to login.
-* Docker [installed on the VM](https://docs.docker.com/install/linux/docker-ce/centos/)
+* Podman [installed on the VM](https://podman.io)
 
 ## Usage
 To run, pass in environment variables, start MariaDB and then run the image. Replace the `YOUR_*` environment variables with the real values. 
 
 ```bash
+export RCJ_DOMAIN="soccer.rcja.org" # replace with the domain being used
 export RCJ_DATABASE_NAME="rcj"
 export RCJ_DATABASE_USER="root" # bad but works
 export RCJ_DATABASE_PASS="YOUR_DB_PASS" # your password here
@@ -68,6 +69,7 @@ podman run -e "RCJ_DATABASE_CONNECTION=$RCJ_DATABASE_CONNECTION" \
            -e "RCJ_SMS_PROVIDER=$RCJ_SMS_PROVIDER" \
            -e "RCJ_SECRETS_KEY=$RCJ_SECRETS_KEY" \
            -e "RCJ_DATABASE_MIGRATE=yes" \
+           -e "RCJ_DOMAIN=$RCJ_DOMAIN" \
            -e "RCJ_DATABASE_INIT0=yes" \
            -e "RCJ_API_TOKEN=$RCJ_API_TOKEN" \
            -v "$HOME/srv/migrations:/srv/migration_data:rw" \

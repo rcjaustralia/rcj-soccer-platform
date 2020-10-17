@@ -1,4 +1,5 @@
 import re
+import os
 
 from flask import request, render_template, redirect, url_for
 
@@ -7,6 +8,9 @@ from rcj_soccer.models import User
 from rcj_soccer.util import sms
 from rcj_soccer.views.auth import check_user, template
 from rcj_soccer.views.competition import get_competition
+
+
+DOMAIN = os.environ.get("RCJ_DOMAIN", "soccer.rcja.org")
 
 
 @app.route("/<competition>/users", methods=["GET", "POST"])
@@ -42,6 +46,8 @@ def show_all_users(comp):
 
 
 def create_new_user(comp):
+    global DOMAIN
+
     user = User()
     user.username = request.form["username"].lower().strip()
     user.phone = re.sub(r"([^0-9\+]+)", "", request.form["phone"])
@@ -56,7 +62,7 @@ def create_new_user(comp):
         sms.get_provider().send(
             user.phone,
             "Welcome to the RCJ soccer platform at " +
-            "https://soccer.rcja.org/" + comp.id + " " +
+            "https://" + DOMAIN + "/" + comp.id + " " +
             "Your username is: " + user.username
         )
 

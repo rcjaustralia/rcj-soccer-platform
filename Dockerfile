@@ -1,8 +1,8 @@
 FROM centos:7
 
 RUN yum upgrade -y && \
-    yum install -y https://centos7.iuscommunity.org/ius-release.rpm && \
-    yum install -y python36u python36u-devel python36u-pip mysql
+    yum install -y https://repo.ius.io/ius-release-el7.rpm && \
+    yum install -y python36u python36u-devel python36u-pip mariadb
 
 EXPOSE 5000
 

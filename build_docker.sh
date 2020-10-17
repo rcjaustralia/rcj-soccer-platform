@@ -3,4 +3,4 @@ rm -rf *.egg-info
 rm -rf build
 rm -rf dist
 python3.7 setup.py bdist_wheel
-podman build "$@" . || docker build "$@"
+podman build "$@" . || docker build "$@" .
